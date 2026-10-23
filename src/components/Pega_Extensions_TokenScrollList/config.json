@@ -1,0 +1,121 @@
+{
+  "name": "Pega_Extensions_TokenScrollList",
+  "label": "Token Scroll List",
+  "description": "Infinite-scroll list for APIs that page with a continuation token",
+  "organization": "Pega",
+  "version": "0.0.1",
+  "library": "Extensions",
+  "componentKey": "Pega_Extensions_TokenScrollList",
+  "type": "Widget",
+  "subtype": ["PAGE", "CASE"],
+  "subtypeLabel": "PAGE and CASE",
+  "icon": "OneColumnPage.svg",
+  "properties": [
+    {
+      "name": "heading",
+      "label": "Heading",
+      "format": "TEXT"
+    },
+    {
+      "name": "dataPage",
+      "label": "Data page name (single page returning entries + next token)",
+      "format": "TEXT"
+    },
+    {
+      "name": "columns",
+      "label": "Columns (field:Label:type, comma-separated; type = text|number|date|datetime|boolean)",
+      "format": "TEXT"
+    },
+    {
+      "name": "pageSize",
+      "label": "Records per request",
+      "format": "INTEGER"
+    },
+    {
+      "name": "listHeight",
+      "label": "List height",
+      "format": "SELECT",
+      "defaultValue": "medium",
+      "source": [
+        {
+          "key": "small",
+          "value": "Small"
+        },
+        {
+          "key": "medium",
+          "value": "Medium"
+        },
+        {
+          "key": "large",
+          "value": "Large"
+        }
+      ]
+    },
+    {
+      "name": "setCaseID",
+      "label": "Pass case context to the data page as CaseInstanceKey",
+      "format": "BOOLEAN"
+    },
+    {
+      "name": "additionalParams",
+      "label": "Additional data page parameters (JSON object)",
+      "format": "TEXT"
+    },
+    {
+      "label": "Token mapping",
+      "format": "GROUP",
+      "properties": [
+        {
+          "name": "tokenParam",
+          "label": "Token parameter name",
+          "format": "TEXT"
+        },
+        {
+          "name": "pageSizeParam",
+          "label": "Page size parameter name",
+          "format": "TEXT"
+        },
+        {
+          "name": "entriesProperty",
+          "label": "Entries property in response",
+          "format": "TEXT"
+        },
+        {
+          "name": "nextTokenProperty",
+          "label": "Next token property in response",
+          "format": "TEXT"
+        },
+        {
+          "name": "lastPageProperty",
+          "label": "Last page flag property in response",
+          "format": "TEXT"
+        }
+      ]
+    },
+    {
+      "label": "Conditions",
+      "format": "GROUP",
+      "properties": [
+        {
+          "name": "visibility",
+          "label": "Visibility",
+          "format": "VISIBILITY"
+        }
+      ]
+    }
+  ],
+  "defaultConfig": {
+    "heading": "Records",
+    "dataPage": "",
+    "columns": "",
+    "pageSize": 50,
+    "listHeight": "medium",
+    "setCaseID": false,
+    "additionalParams": "",
+    "tokenParam": "startIdentifier",
+    "pageSizeParam": "maxRecords",
+    "entriesProperty": "Entries",
+    "nextTokenProperty": "NextIdentifier",
+    "lastPageProperty": "IsLastPage"
+  }
+}
