@@ -48,3 +48,4 @@ Ensure you have access to the following in your system:
 | [CaseSummaryWidget](src/components/Virtusa_ClaudeDXComponents_CaseSummaryWidget) | Widget (CASE) | Displays case ID, status, customer name, and last-updated timestamp |
 | [PIIRedactor](src/components/Virtusa_ClaudeDXComponents_PIIRedactor) | Field (Text) | Redacted display of card numbers, SSNs, phone, email, and generic values, with a masked-input edit mode |
 | [SLADeadlineTracker](src/components/Virtusa_ClaudeDXComponents_SLADeadlineTracker) | Widget (PAGE) | Landing-page dashboard of SLA/deadline status across active cases, with click-to-open case links |
+| [TokenScrollList](src/components/Pega_Extensions_TokenScrollList) | Widget (PAGE & CASE) | Infinite-scroll table for third-party APIs that page with a continuation token (`nextIdentifier` → `startIdentifier`); includes Pega data page setup, publishing and App Studio usage guide |
