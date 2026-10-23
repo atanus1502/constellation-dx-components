@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { PegaExtensionsTokenScrollList, type TokenScrollListProps } from './index';
+import { VirtusaClaudeDxComponentsTokenScrollList, type TokenScrollListProps } from './index';
 import {
   createMockDataPage,
   defaultConfig,
@@ -12,8 +12,8 @@ import {
 type StoryArgs = Omit<TokenScrollListProps, 'getPConnect'>;
 
 const meta: Meta<StoryArgs> = {
-  title: 'Widgets/Token Scroll List',
-  component: PegaExtensionsTokenScrollList as unknown as Meta<StoryArgs>['component'],
+  title: 'VirtusaClaudeDxComponentsTokenScrollList',
+  component: VirtusaClaudeDxComponentsTokenScrollList as unknown as Meta<StoryArgs>['component'],
   argTypes: {
     heading: { control: 'text' },
     dataPage: { control: 'text' },
@@ -41,7 +41,7 @@ const withMockApi =
     const { getPageDataAsync } = createMockDataPage(options);
     installMockPCore(getPageDataAsync);
     return (
-      <PegaExtensionsTokenScrollList
+      <VirtusaClaudeDxComponentsTokenScrollList
         {...args}
         getPConnect={mockGetPConnect as unknown as TokenScrollListProps['getPConnect']}
       />

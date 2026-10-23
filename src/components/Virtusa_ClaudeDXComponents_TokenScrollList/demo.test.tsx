@@ -3,7 +3,7 @@ import { composeStories } from '@storybook/react';
 import '@testing-library/jest-dom';
 
 import * as DemoStories from './demo.stories';
-import { PegaExtensionsTokenScrollList, type TokenScrollListProps } from './index';
+import { VirtusaClaudeDxComponentsTokenScrollList, type TokenScrollListProps } from './index';
 import {
   createMockDataPage,
   defaultConfig,
@@ -19,7 +19,7 @@ const setup = (api: MockApiOptions, props: Partial<TokenScrollListProps> = {}) =
   const mock = createMockDataPage(api);
   installMockPCore(mock.getPageDataAsync);
   const utils = render(
-    <PegaExtensionsTokenScrollList
+    <VirtusaClaudeDxComponentsTokenScrollList
       {...defaultConfig}
       pageSize={10}
       getPConnect={mockGetPConnect as unknown as TokenScrollListProps['getPConnect']}
@@ -32,7 +32,7 @@ const setup = (api: MockApiOptions, props: Partial<TokenScrollListProps> = {}) =
 const tokensSent = (calls: { parameters: Record<string, unknown> }[]) =>
   calls.map(call => call.parameters.startIdentifier);
 
-describe('PegaExtensionsTokenScrollList', () => {
+describe('VirtusaClaudeDxComponentsTokenScrollList', () => {
   test('renders the Default story with the first chunk', async () => {
     render(<Default />);
     expect(await screen.findByText('Card transactions')).toBeVisible();
@@ -147,7 +147,7 @@ describe('PegaExtensionsTokenScrollList', () => {
         }))
     );
     render(
-      <PegaExtensionsTokenScrollList
+      <VirtusaClaudeDxComponentsTokenScrollList
         {...defaultConfig}
         pageSize={10}
         tokenParam='from'
@@ -178,7 +178,7 @@ describe('PegaExtensionsTokenScrollList', () => {
     const mock = createMockDataPage({ total: 3 });
     installMockPCore(mock.getPageDataAsync);
     render(
-      <PegaExtensionsTokenScrollList
+      <VirtusaClaudeDxComponentsTokenScrollList
         dataPage='D_TransactionsChunk'
         getPConnect={mockGetPConnect as unknown as TokenScrollListProps['getPConnect']}
       />
