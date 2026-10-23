@@ -229,12 +229,12 @@ npm install
 npm run startStorybook
 ```
 
-Open http://localhost:6040 → **VirtusaClaudeDxComponentsTokenScrollList** and pick:
+Open http://localhost:6040. Storybook opens straight on **Live API — Wikipedia**, the first story under **VirtusaClaudeDxComponentsTokenScrollList**:
 
-| Story                           | What it shows                                                                                                                                         |
-| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Live Wikipedia**              | Real English Wikipedia edits from the 15 minutes before the page loaded. Scroll to keep pulling 50-row chunks; this usually runs to hundreds of rows. |
-| **Live Wikipedia Short Window** | Only the last 2 minutes. Usually 1–3 chunks, then the token runs out and the footer shows _All N records loaded_.                                     |
+| Story                              | What it shows                                                                                                                                         |
+| ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Live API — Wikipedia** (default) | Real English Wikipedia edits from the 15 minutes before the page loaded. Scroll to keep pulling 50-row chunks; this usually runs to hundreds of rows. |
+| **Live API — last 2 minutes**      | Only the last 2 minutes. Usually 1–3 chunks, then the token runs out and the footer shows _All N records loaded_.                                     |
 
 In Storybook, [`liveApi.ts`](liveApi.ts) stands in for Pega. It calls Wikipedia directly from the browser (the API allows this with `origin=*`) and does exactly what the data page and data transforms in Steps 3–6 do:
 
@@ -437,12 +437,12 @@ Once this works, swap in your own service:
 
 ```bash
 npm install
-npm run startStorybook      # http://localhost:6040 → VirtusaClaudeDxComponentsTokenScrollList
+npm run startStorybook      # http://localhost:6040 → opens on Live API — Wikipedia
 npm run test                # Jest unit tests
 npm run lint
 ```
 
-The Storybook stories use a mock API in [`mock.ts`](mock.ts) that issues `TOKEN_<n>` continuation tokens just like the real service. They cover the default scroll, a single page, an empty result, an error then retry, inferred columns, a compact utility layout and the not-configured state. Two more stories, **Live Wikipedia** and **Live Wikipedia Short Window**, run against the real Wikipedia Recent Changes API through [`liveApi.ts`](liveApi.ts) (see [Part 4, Step 0](#step-0--see-it-live-in-storybook-no-pega-needed)). Jest never calls the network; the live adapter is tested with a stubbed `fetch`.
+Storybook opens on **Live API — Wikipedia**, which runs against the real Wikipedia Recent Changes API through [`liveApi.ts`](liveApi.ts), followed by **Live API — last 2 minutes** (see [Part 4, Step 0](#step-0--see-it-live-in-storybook-no-pega-needed)). The remaining stories use a mock API in [`mock.ts`](mock.ts) that issues `TOKEN_<n>` continuation tokens and works offline. They cover a long scroll (**Mock API — transactions**), a single page, an empty result, an error then retry, inferred columns, a compact utility layout and the not-configured state. Jest never calls the network; the live adapter is tested with a stubbed `fetch`.
 
 | File               | Purpose                                                                                              |
 | ------------------ | ---------------------------------------------------------------------------------------------------- |

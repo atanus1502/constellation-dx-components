@@ -19,7 +19,7 @@ import {
 } from './mock';
 import { getByPath, inferColumns, parseAdditionalParams, parseColumns, toPageSize } from './utils';
 
-const { Default } = composeStories(DemoStories);
+const { MockApi } = composeStories(DemoStories);
 
 const setup = (api: MockApiOptions, props: Partial<TokenScrollListProps> = {}) => {
   const mock = createMockDataPage(api);
@@ -39,8 +39,8 @@ const tokensSent = (calls: { parameters: Record<string, unknown> }[]) =>
   calls.map(call => call.parameters.startIdentifier);
 
 describe('VirtusaClaudeDxComponentsTokenScrollList', () => {
-  test('renders the Default story with the first chunk', async () => {
-    render(<Default />);
+  test('renders the Mock API story with the first chunk', async () => {
+    render(<MockApi />);
     expect(await screen.findByText('Card transactions')).toBeVisible();
     expect(await screen.findByText('TXN-100001', {}, { timeout: 3000 })).toBeVisible();
   });
