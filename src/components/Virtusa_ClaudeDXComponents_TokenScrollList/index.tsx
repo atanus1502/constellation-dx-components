@@ -62,7 +62,7 @@ const renderValue = (value: unknown, type: ColumnDef['type']) => {
   return typeof value === 'object' ? JSON.stringify(value) : String(value);
 };
 
-export const PegaExtensionsTokenScrollList = (props: TokenScrollListProps) => {
+export const VirtusaClaudeDxComponentsTokenScrollList = (props: TokenScrollListProps) => {
   const {
     heading = 'Records',
     dataPage = '',
@@ -284,4 +284,4 @@ export const PegaExtensionsTokenScrollList = (props: TokenScrollListProps) => {
   );
 };
 
-export default withConfiguration(PegaExtensionsTokenScrollList);
+export default withConfiguration(VirtusaClaudeDxComponentsTokenScrollList);
