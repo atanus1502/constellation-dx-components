@@ -8,6 +8,7 @@ import {
   mockGetPConnect,
   type MockApiOptions
 } from './mock';
+import { createWikipediaDataPage, recentWindow } from './liveApi';
 
 type StoryArgs = Omit<TokenScrollListProps, 'getPConnect'>;
 
@@ -78,6 +79,47 @@ export const InferredColumns: Story = {
 export const CompactUtility: Story = {
   args: { listHeight: 'small', pageSize: 10, heading: 'Recent transactions' },
   render: withMockApi({ total: 45, delayMs: 300 })
+};
+
+const withLiveApi: Story['render'] = args => {
+  installMockPCore(createWikipediaDataPage());
+  return (
+    <VirtusaClaudeDxComponentsTokenScrollList
+      {...args}
+      getPConnect={mockGetPConnect as unknown as TokenScrollListProps['getPConnect']}
+    />
+  );
+};
+
+const liveConfig = {
+  heading: 'Wikipedia — live edits',
+  dataPage: 'D_WikiRecentChanges',
+  columns:
+    'timestamp:Time:datetime, title:Article, user:Editor, comment:Summary, newlen:Size:number',
+  pageSize: 50
+};
+
+/**
+ * Live API: real English Wikipedia edits from the last 15 minutes, paged with Wikipedia's
+ * continuation token (rccontinue). Scroll to fetch each next chunk; watch the browser Network tab
+ * to see the token from one response sent with the next request. Needs internet access.
+ */
+export const LiveWikipedia: Story = {
+  args: { ...liveConfig, additionalParams: JSON.stringify(recentWindow(15)) },
+  render: withLiveApi
+};
+
+/**
+ * Live API, short window: the last 2 minutes of edits. Usually 1–3 chunks, then the response has
+ * no continue token and the footer shows "All N records loaded".
+ */
+export const LiveWikipediaShortWindow: Story = {
+  args: {
+    ...liveConfig,
+    heading: 'Wikipedia — last 2 minutes',
+    additionalParams: JSON.stringify(recentWindow(2))
+  },
+  render: withLiveApi
 };
 
 /** No data page configured — guidance shown to the App Studio author. */

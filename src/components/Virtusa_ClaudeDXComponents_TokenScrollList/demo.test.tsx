@@ -3,6 +3,12 @@ import { composeStories } from '@storybook/react';
 import '@testing-library/jest-dom';
 
 import * as DemoStories from './demo.stories';
+import {
+  buildWikipediaUrl,
+  createWikipediaDataPage,
+  mapWikipediaResponse,
+  recentWindow
+} from './liveApi';
 import { VirtusaClaudeDxComponentsTokenScrollList, type TokenScrollListProps } from './index';
 import {
   createMockDataPage,
@@ -228,5 +234,85 @@ describe('utils', () => {
     expect(toPageSize(0)).toBe(50);
     expect(toPageSize('abc')).toBe(50);
     expect(toPageSize(10000)).toBe(500);
+  });
+});
+
+describe('live Wikipedia adapter (Storybook)', () => {
+  test('first request omits rccontinue and maps dates newest-first', () => {
+    const url = new URL(
+      buildWikipediaUrl({
+        startIdentifier: '',
+        maxRecords: 50,
+        fromDate: '2026-10-23T05:58:00Z',
+        toDate: '2026-10-23T06:00:00Z'
+      })
+    );
+    expect(url.searchParams.has('rccontinue')).toBe(false);
+    expect(url.searchParams.get('rcstart')).toBe('2026-10-23T06:00:00Z');
+    expect(url.searchParams.get('rcend')).toBe('2026-10-23T05:58:00Z');
+    expect(url.searchParams.get('rclimit')).toBe('50');
+    expect(url.searchParams.get('origin')).toBe('*');
+  });
+
+  test('next request passes the token as rccontinue', () => {
+    const url = new URL(buildWikipediaUrl({ startIdentifier: '20261023055908|2082266677' }));
+    expect(url.searchParams.get('rccontinue')).toBe('20261023055908|2082266677');
+  });
+
+  test('maps continue token, last page and entries', () => {
+    const entry = {
+      rcid: 1,
+      title: 'A',
+      user: 'U',
+      comment: '',
+      timestamp: 't',
+      oldlen: 1,
+      newlen: 2
+    };
+    expect(
+      mapWikipediaResponse({ continue: { rccontinue: 'T|1' }, query: { recentchanges: [entry] } })
+    ).toEqual({
+      Entries: [entry],
+      NextIdentifier: 'T|1',
+      IsLastPage: false
+    });
+    expect(mapWikipediaResponse({ query: { recentchanges: [] } })).toEqual({
+      Entries: [],
+      NextIdentifier: '',
+      IsLastPage: true
+    });
+  });
+
+  test('surfaces API errors returned with HTTP 200', () => {
+    expect(() =>
+      mapWikipediaResponse({ error: { code: 'badcontinue', info: 'Invalid continue param.' } })
+    ).toThrow('badcontinue');
+  });
+
+  test('data page adapter fetches and maps, and rejects on HTTP errors', async () => {
+    const okFetch = jest.fn(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ continue: { rccontinue: 'T|2' }, query: { recentchanges: [] } })
+    })) as unknown as typeof fetch;
+    await expect(
+      createWikipediaDataPage(okFetch)('D_WikiRecentChanges', 'ctx', { maxRecords: 5 })
+    ).resolves.toEqual({
+      Entries: [],
+      NextIdentifier: 'T|2',
+      IsLastPage: false
+    });
+    const badFetch = jest.fn(async () => ({ ok: false, status: 429 })) as unknown as typeof fetch;
+    await expect(createWikipediaDataPage(badFetch)('D_WikiRecentChanges')).rejects.toThrow(
+      'HTTP 429'
+    );
+  });
+
+  test('recentWindow ends now and spans the requested minutes', () => {
+    const now = new Date('2026-10-23T06:00:00.500Z');
+    expect(recentWindow(2, now)).toEqual({
+      fromDate: '2026-10-23T05:58:00Z',
+      toDate: '2026-10-23T06:00:00Z'
+    });
   });
 });

@@ -220,6 +220,31 @@ This walkthrough connects the widget to a **live, public API** so you can see th
 
 > **Never send an empty token.** On the first request, leave `rccontinue` out completely. `rccontinue=` (empty) returns a `badcontinue` error.
 
+### Step 0 — See it live in Storybook (no Pega needed)
+
+The quickest way to watch the widget run against this API is the Storybook story, which needs only this repo and an internet connection:
+
+```bash
+npm install
+npm run startStorybook
+```
+
+Open http://localhost:6040 → **VirtusaClaudeDxComponentsTokenScrollList** and pick:
+
+| Story                           | What it shows                                                                                                                                         |
+| ------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Live Wikipedia**              | Real English Wikipedia edits from the 15 minutes before the page loaded. Scroll to keep pulling 50-row chunks; this usually runs to hundreds of rows. |
+| **Live Wikipedia Short Window** | Only the last 2 minutes. Usually 1–3 chunks, then the token runs out and the footer shows _All N records loaded_.                                     |
+
+In Storybook, [`liveApi.ts`](liveApi.ts) stands in for Pega. It calls Wikipedia directly from the browser (the API allows this with `origin=*`) and does exactly what the data page and data transforms in Steps 3–6 do:
+
+- **Request:** `startIdentifier` → `rccontinue` (left out when empty), `maxRecords` → `rclimit`, `toDate` → `rcstart`, `fromDate` → `rcend`.
+- **Response:** `continue.rccontinue` → `NextIdentifier`, `query.recentchanges` → `Entries`, `IsLastPage` = no token. API errors returned with HTTP 200 become a thrown error, so the widget shows _Try again_.
+
+Open the browser's developer tools on the **Network** tab and filter on `api.php`. Each scroll sends one request whose `rccontinue` is the token from the previous response, and the date window stays the same throughout. The browser calls Wikipedia directly, so a corporate proxy that blocks `en.wikipedia.org` will make these stories show an error.
+
+> Verified in Chrome: the 15-minute story grew 50 → 100 → 150 → 200 rows as it was scrolled, each request carrying the previous `rccontinue`, and the 2-minute story stopped at _All 85 records loaded_.
+
 ### Step 1 — Try the API outside Pega
 
 Before building anything in Pega, confirm the API works from your machine. Replace the dates with a window from **today** (Recent Changes keeps roughly the last 30 days).
@@ -417,15 +442,16 @@ npm run test                # Jest unit tests
 npm run lint
 ```
 
-The Storybook stories use a mock API in [`mock.ts`](mock.ts) that issues `TOKEN_<n>` continuation tokens just like the real service. They cover the default scroll, a single page, an empty result, an error then retry, inferred columns, a compact utility layout and the not-configured state.
+The Storybook stories use a mock API in [`mock.ts`](mock.ts) that issues `TOKEN_<n>` continuation tokens just like the real service. They cover the default scroll, a single page, an empty result, an error then retry, inferred columns, a compact utility layout and the not-configured state. Two more stories, **Live Wikipedia** and **Live Wikipedia Short Window**, run against the real Wikipedia Recent Changes API through [`liveApi.ts`](liveApi.ts) (see [Part 4, Step 0](#step-0--see-it-live-in-storybook-no-pega-needed)). Jest never calls the network; the live adapter is tested with a stubbed `fetch`.
 
-| File               | Purpose                                                      |
-| ------------------ | ------------------------------------------------------------ |
-| `index.tsx`        | Widget: token chain, IntersectionObserver loading, Cosmos UI |
-| `utils.ts`         | Column parsing, dot-path lookup, parameter parsing           |
-| `styles.ts`        | Scroll area and footer styles                                |
-| `config.json`      | Property panel definition used by App Studio                 |
-| `mock.ts`          | Fake token-paged API for Storybook and tests                 |
-| `demo.stories.tsx` | Storybook stories                                            |
-| `demo.test.tsx`    | Jest tests                                                   |
-| `docs.mdx`         | Storybook Docs tab                                           |
+| File               | Purpose                                                                                              |
+| ------------------ | ---------------------------------------------------------------------------------------------------- |
+| `index.tsx`        | Widget: token chain, IntersectionObserver loading, Cosmos UI                                         |
+| `utils.ts`         | Column parsing, dot-path lookup, parameter parsing                                                   |
+| `styles.ts`        | Scroll area and footer styles                                                                        |
+| `config.json`      | Property panel definition used by App Studio                                                         |
+| `mock.ts`          | Fake token-paged API for Storybook and tests                                                         |
+| `liveApi.ts`       | Storybook-only adapter for the live Wikipedia Recent Changes API (not used by the widget at runtime) |
+| `demo.stories.tsx` | Storybook stories                                                                                    |
+| `demo.test.tsx`    | Jest tests                                                                                           |
+| `docs.mdx`         | Storybook Docs tab                                                                                   |
