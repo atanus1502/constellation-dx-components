@@ -9,6 +9,8 @@ A Constellation DX widget that shows an infinite-scrolling table for third-party
 | Built with | DX Component Builder `@pega/custom-dx-components@~25.1.25`, Cosmos `@pega/cosmos-react-core` |
 | Target     | Pega Infinity '25 (rebuild with the matching builder version for other releases)             |
 
+> **Want to try it end-to-end against a live API first?** See [Part 4 — Use with a real-time API](#part-4--use-with-a-real-time-api-wikipedia-recent-changes). It walks through a free, public, no-login API with the same continuation-token pattern.
+
 ---
 
 ## Why this exists
@@ -189,6 +191,206 @@ Save, then open the landing page or a case to see it.
 - **No column sorting or filtering.** A token chain can only be read forward in the order the API returns it. Filter through _Additional parameters_ (e.g. the date range) instead.
 - Tokens often expire on the provider's side. If an old token is rejected, **Refresh** restarts the chain.
 - Records are kept in the browser while the widget is open. For very long sessions, keep _Records per request_ sensible and narrow the date range.
+
+---
+
+## Part 4 — Use with a real-time API (Wikipedia Recent Changes)
+
+This walkthrough connects the widget to a **live, public API** so you can see the whole token chain working in Pega before wiring up your own service. It uses Wikipedia's Recent Changes API (the MediaWiki Action API):
+
+- **Free, no login, no API key**: a plain `GET` request.
+- **Continuation-token paging**, the same pattern as the APIs this widget targets.
+- **Date-range filtering**, the equivalent of `fromDate` / `toDate`.
+- **A clear last page**: the token disappears when there is nothing more to read.
+- **Real-time data**: edits made seconds ago appear at the top.
+
+### How it maps to the pattern
+
+| Generic token API (this widget's design) | Wikipedia Recent Changes                                      |
+| ---------------------------------------- | ------------------------------------------------------------- |
+| Request token `startIdentifier`          | Query parameter `rccontinue`                                  |
+| Request page size `maxRecords`           | Query parameter `rclimit` (1–500)                             |
+| `fromDate` (older bound)                 | Query parameter **`rcend`**                                   |
+| `toDate` (newer bound)                   | Query parameter **`rcstart`**                                 |
+| Response `header.nextIdentifier`         | `continue.rccontinue`, e.g. `20261023055908\|2082266677`      |
+| Response `header.isLastPage`             | No flag: the `continue` object is **absent** on the last page |
+| Response `data.entries`                  | `query.recentchanges`                                         |
+
+> **Watch the date names.** Recent changes are listed newest first, so `rcstart` is the **newer** timestamp and `rcend` is the **older** one: `rcstart = toDate`, `rcend = fromDate`. Swapping them returns nothing.
+
+> **Never send an empty token.** On the first request, leave `rccontinue` out completely. `rccontinue=` (empty) returns a `badcontinue` error.
+
+### Step 1 — Try the API outside Pega
+
+Before building anything in Pega, confirm the API works from your machine. Replace the dates with a window from **today** (Recent Changes keeps roughly the last 30 days).
+
+```bash
+# First chunk: no rccontinue
+curl -s -A "PegaDXTest/1.0 (you@example.com)" \
+  "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&list=recentchanges&rctype=edit&rcnamespace=0&rcprop=title%7Ctimestamp%7Cuser%7Ccomment%7Csizes%7Cids&rclimit=50&rcstart=2026-10-23T06:00:00Z&rcend=2026-10-23T05:58:00Z"
+
+# Next chunk: pass continue.rccontinue from the previous response (URL-encode the "|" as %7C)
+curl -s -A "PegaDXTest/1.0 (you@example.com)" \
+  "https://en.wikipedia.org/w/api.php?action=query&format=json&formatversion=2&list=recentchanges&rctype=edit&rcnamespace=0&rcprop=title%7Ctimestamp%7Cuser%7Ccomment%7Csizes%7Cids&rclimit=50&rcstart=2026-10-23T06:00:00Z&rcend=2026-10-23T05:58:00Z&rccontinue=20261023055908%7C2082266677"
+```
+
+When this was verified, a 2-minute window returned **3 chunks: 50, 50 and 21 records**. The third response had no `continue` object, which is how the last page is signalled.
+
+Sample response (trimmed). Use it as the sample in the Integration wizard:
+
+```json
+{
+  "batchcomplete": true,
+  "continue": { "rccontinue": "20261023065540|2082272909", "continue": "-||" },
+  "query": {
+    "recentchanges": [
+      {
+        "type": "edit",
+        "ns": 0,
+        "title": "Derek Wood (author)",
+        "pageid": 5462816,
+        "revid": 1381548072,
+        "old_revid": 1253780561,
+        "rcid": 2082272920,
+        "user": "Entranced98",
+        "oldlen": 3481,
+        "newlen": 3518,
+        "timestamp": "2026-10-23T06:55:49Z",
+        "comment": "Importing Wikidata short description"
+      }
+    ]
+  }
+}
+```
+
+### Step 2 — Make sure Pega can reach the API
+
+- The Pega server needs outbound HTTPS access to `en.wikipedia.org`. On Pega Cloud this is normally open. On-premises, check the proxy and firewall rules.
+- Wikimedia's [User-Agent policy](https://meta.wikimedia.org/wiki/User-Agent_policy) asks every client to send a descriptive `User-Agent` with contact details. Requests without one may be blocked. You will add this header in Step 3.
+
+### Step 3 — Create the REST connector
+
+In Dev Studio, open the REST integration wizard (**Configure → Integration → Connectors → Create REST integration**; menu names vary slightly by version).
+
+1. **Endpoint URL:** `https://en.wikipedia.org/w/api.php`
+2. **Method:** `GET`
+3. **Query string parameters.** Add these constant values:
+
+   | Name            | Value                                         |
+   | --------------- | --------------------------------------------- |
+   | `action`        | `query`                                       |
+   | `format`        | `json`                                        |
+   | `formatversion` | `2`                                           |
+   | `list`          | `recentchanges`                               |
+   | `rctype`        | `edit`                                        |
+   | `rcnamespace`   | `0` (articles only)                           |
+   | `rcprop`        | `title\|timestamp\|user\|comment\|sizes\|ids` |
+
+   Add these **dynamic** parameters, mapped from properties on the request page (set in Step 5): `rclimit`, `rcstart`, `rcend`, `rccontinue`.
+
+4. **Request header:** `User-Agent` = `PegaDXTest/1.0 (your-email@your-company.com)`.
+5. **Response:** paste the sample response from Step 1 so the wizard generates the data model, e.g. `ORG-App-Int-Wikipedia-RecentChanges` with `continue` and `query.recentchanges` (a page list).
+6. Finish the wizard. Use **Test** on the generated `Connect-REST` rule to confirm a 200 response.
+
+### Step 4 — Create the chunk data class and data page
+
+Create the class the widget reads. This is the same model as Part 1:
+
+| Class                               | Property                                                                             | Type                                   |
+| ----------------------------------- | ------------------------------------------------------------------------------------ | -------------------------------------- |
+| `ORG-App-Data-WikiChangeChunk`      | `Entries`                                                                            | Page List of `ORG-App-Data-WikiChange` |
+|                                     | `NextIdentifier`                                                                     | Text                                   |
+|                                     | `IsLastPage`                                                                         | True/False                             |
+| `ORG-App-Data-WikiChange` (records) | `title`, `user`, `comment`, `timestamp` (Text); `newlen`, `oldlen`, `rcid` (Integer) | One row in the table                   |
+
+Create data page **`D_WikiRecentChanges`**:
+
+| Setting    | Value                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------ |
+| Structure  | **Page**                                                                                         |
+| Class      | `ORG-App-Data-WikiChangeChunk`                                                                   |
+| Mode       | Read-only                                                                                        |
+| Scope      | Thread (or Requestor)                                                                            |
+| Parameters | `startIdentifier` (Text), `maxRecords` (Integer), `fromDate` (Text), `toDate` (Text)             |
+| Source     | Connector → the `Connect-REST` rule from Step 3, with the request/response data transforms below |
+| Refresh    | Reload once per interaction                                                                      |
+
+### Step 5 — Request data transform
+
+Map the data page parameters onto the connector's request:
+
+| Action | Target                | Source                  | Condition                       |
+| ------ | --------------------- | ----------------------- | ------------------------------- |
+| Set    | `.request.rclimit`    | `Param.maxRecords`      | —                               |
+| Set    | `.request.rcstart`    | `Param.toDate`          | — (newer bound, see note above) |
+| Set    | `.request.rcend`      | `Param.fromDate`        | — (older bound)                 |
+| When   |                       |                         | `Param.startIdentifier != ""`   |
+| ↳ Set  | `.request.rccontinue` | `Param.startIdentifier` | only inside the When            |
+
+Do **not** set `rccontinue` to `""` on the first call; leave it unset. Your generated request property names may differ from `.request.*`, so use what the wizard created.
+
+### Step 6 — Response data transform
+
+Map the API response onto the chunk page the widget reads:
+
+| Action      | Target            | Source                                                                                                                 |
+| ----------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Set         | `.NextIdentifier` | `.response.continue.rccontinue`                                                                                        |
+| Set         | `.IsLastPage`     | `false`                                                                                                                |
+| When        |                   | `.response.continue.rccontinue` is blank (no token returned)                                                           |
+| ↳ Set       | `.IsLastPage`     | `true`                                                                                                                 |
+| Append each | `.Entries`        | each page in `.response.query.recentchanges` → map `title`, `user`, `comment`, `timestamp`, `newlen`, `oldlen`, `rcid` |
+
+Wikipedia returns API errors with HTTP 200 and an `error` object (for example `{"error":{"code":"badcontinue",...}}`). Add a **When** `.response.error.code` is not blank → **Page-Add-Message** with `.response.error.info`. The data page then fails, and the widget shows the message with **Try again** instead of an empty list.
+
+### Step 7 — Test the data page in Dev Studio
+
+1. Open `D_WikiRecentChanges` → **Actions → Run**. Use `startIdentifier` empty, `maxRecords` `50`, and a 2-minute window from today for `fromDate`/`toDate`.
+2. Check the result: `Entries` has 50 rows and `NextIdentifier` holds a token such as `20261023055908|2082266677`.
+3. Run again with that token as `startIdentifier`. You should get the next 50 rows with no overlap.
+4. Keep going until `NextIdentifier` is empty and `IsLastPage` is `true`.
+
+If the first run returns `badcontinue`, the connector is sending an empty `rccontinue`. Use **Tracer** to inspect the outgoing URL and fix the When condition from Step 5.
+
+### Step 8 — Configure the widget
+
+Publish the component (Part 2), add it to a landing page or a case's Utilities pane (Part 3), and set:
+
+| Property              | Value                                                                                                |
+| --------------------- | ---------------------------------------------------------------------------------------------------- |
+| Heading               | `Wikipedia — live edits`                                                                             |
+| Data page name        | `D_WikiRecentChanges`                                                                                |
+| Columns               | `timestamp:Time:datetime, title:Article, user:Editor, comment:Summary, newlen:Size:number`           |
+| Records per request   | `50`                                                                                                 |
+| List height           | `Medium`                                                                                             |
+| Additional parameters | `{"fromDate":"2026-10-23T05:58:00Z","toDate":"2026-10-23T06:00:00Z"}`, using a window from **today** |
+| Token mapping         | leave the defaults (`startIdentifier`, `maxRecords`, `Entries`, `NextIdentifier`, `IsLastPage`)      |
+
+### Step 9 — Verify the token chain in the browser
+
+Open the page with the browser's developer tools on the **Network** tab:
+
+1. The first data view request carries `startIdentifier: ""`, and the table shows 50 rows with the header `50+`.
+2. Scroll down. A second request carries `startIdentifier: "2026…|…"`, the token from the first response, and 50 more rows are appended.
+3. The third request returns 21 rows, the footer reads **All 121 records loaded**, and no more requests are sent. (Counts depend on how busy Wikipedia was in your window.)
+4. Click **Refresh**. The next request goes back to `startIdentifier: ""`.
+
+For a long, continuous scroll, widen the window to an hour or a whole day. English Wikipedia records thousands of edits per hour.
+
+### Switching to your real API
+
+Once this works, swap in your own service:
+
+1. Replace the connector with your API (POST body instead of query string is fine).
+2. Map the token, page size and date parameters in the request data transform. Again, send the token only when it isn't empty.
+3. Map your response's next token, last-page flag and entries in the response data transform (for the sample API in [Why this exists](#why-this-exists): `header.nextIdentifier`, `header.isLastPage`, `data.entries`).
+4. Point the widget's _Data page name_ at the new data page. If you kept the same parameter and property names, nothing else changes.
+
+### Etiquette and limits
+
+- Keep _Records per request_ at 50–100 and only scroll as far as you need. Anonymous Wikipedia API use is free but shared.
+- Editor names in the results are real, public Wikipedia usernames.
+- Data older than about 30 days isn't available from Recent Changes, so always test with recent dates.
 
 ---
 
