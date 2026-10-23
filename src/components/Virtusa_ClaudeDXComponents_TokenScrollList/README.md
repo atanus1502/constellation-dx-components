@@ -2,12 +2,14 @@
 
 A Constellation DX widget that shows an infinite-scrolling table for third-party APIs that page with a **continuation token** (for example `nextIdentifier` → `startIdentifier`) instead of a page number or offset.
 
-|            |                                                                                              |
-| ---------- | -------------------------------------------------------------------------------------------- |
-| Type       | Widget — `PAGE` and `CASE` (landing pages and the case Utilities pane)                       |
-| Library    | `ClaudeDXComponents` (organization `Virtusa`)                                                |
-| Built with | DX Component Builder `@pega/custom-dx-components@~25.1.25`, Cosmos `@pega/cosmos-react-core` |
-| Target     | Pega Infinity '25 (rebuild with the matching builder version for other releases)             |
+|            |                                                                                                                 |
+| ---------- | --------------------------------------------------------------------------------------------------------------- |
+| Type       | Widget — `PAGE` and `CASE` (landing pages and the case Utilities pane)                                          |
+| Library    | `ClaudeDXComponents` (organization `Virtusa`)                                                                   |
+| Built with | DX Component Builder `@pega/custom-dx-components@~26.1.11` (library mode), Cosmos `@pega/cosmos-react-core` 9.5 |
+| Target     | Pega Infinity '26 (for other releases, rebuild with the matching builder version — see Part 5)                  |
+
+> **Want to use this component in your own application?** Follow [Part 5 — Use this component in your own Pega application](#part-5--use-this-component-in-your-own-pega-application) for a step-by-step guide, from cloning this repo to adding the widget to a case type.
 
 > **Want to try it end-to-end against a live API first?** See [Part 4 — Use with a real-time API](#part-4--use-with-a-real-time-api-wikipedia-recent-changes). It walks through a free, public, no-login API with the same continuation-token pattern.
 
@@ -98,6 +100,8 @@ Test it in Dev Studio with **Actions → Run**, giving `startIdentifier` empty a
 ## Part 2 — Import the component into Pega
 
 DX components are not imported as a file through Dev Studio. The builder **publishes** them into a ruleset, where they become a `Rule-UI-Component` record. From then on they move between environments like any other rule.
+
+> **On Pega Infinity '26** the builder works in **library mode**, and a published library must also be **enabled for your application** before it appears in Studio. [Part 5](#part-5--use-this-component-in-your-own-pega-application) has the complete '26 procedure.
 
 ### 1. Prerequisites in Pega (one time)
 
@@ -419,17 +423,254 @@ Once this works, swap in your own service:
 
 ---
 
+## Part 5 — Use this component in your own Pega application
+
+A step-by-step guide for taking this component from [github.com/atanus1502/DXComponents](https://github.com/atanus1502/DXComponents) and using it in **your** Pega application. It assumes Pega Infinity '26 — for other releases see [Other Pega versions](#other-pega-versions).
+
+**You will end up with:** a DX Component Builder project on your machine containing this widget, the widget published to your Pega instance as a component library, enabled for your application, and added to a case type.
+
+### What you need
+
+| On your machine                                               | In Pega                                                                                           |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Git 2.30+                                                     | Pega Infinity '26 with a Constellation application                                                |
+| Node.js **24.4.1+** and npm **11.4.2+** (`node -v`, `npm -v`) | An operator with developer rights in that application (the default access group must point to it) |
+| A code editor (VS Code recommended)                           | An **unlocked** ruleset version on the application's stack to publish into (not a branch ruleset) |
+|                                                               | The OAuth 2.0 client registration **DX-ComponentDev** (step 4 shows how to import it)             |
+
+### Step 1 — Create a DX Component Builder project
+
+The builder version must match your Pega version. For Infinity '26:
+
+```bash
+mkdir -p ~/Projects && cd ~/Projects       # any folder without spaces in the path
+npx @pega/custom-dx-components@~26.1.11 init
+```
+
+Answer the prompts:
+
+| Prompt               | Enter                                                                          |
+| -------------------- | ------------------------------------------------------------------------------ |
+| Project name         | e.g. `mydxcomponents` (lowercase, no spaces)                                   |
+| Organization name    | **`Virtusa`** — keep this so the component keeps its name (see the note below) |
+| Description / Author | anything                                                                       |
+
+Then `cd mydxcomponents`. Init runs `npm install` for you.
+
+> **Why `Virtusa`?** A component's name is `<Organization>_<Library>_<Component>`, and the builder checks that `config.json` matches the project. Using organization `Virtusa` and library `ClaudeDXComponents` lets you use the folder exactly as it is. To use your own names instead, see [Renaming to your own organization](#renaming-to-your-own-organization).
+
+### Step 2 — Copy the component from GitHub
+
+```bash
+# from any folder outside your project
+git clone https://github.com/atanus1502/DXComponents.git
+```
+
+Copy into your project's `src/components/` folder:
+
+| From the clone                                                              | To your project                                                     |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `src/components/Virtusa_ClaudeDXComponents_TokenScrollList/` (whole folder) | `src/components/Virtusa_ClaudeDXComponents_TokenScrollList/`        |
+| `src/components/shared/create-nonce.ts`                                     | `src/components/shared/create-nonce.ts` (skip if it already exists) |
+
+```bash
+cp -R DXComponents/src/components/Virtusa_ClaudeDXComponents_TokenScrollList mydxcomponents/src/components/
+mkdir -p mydxcomponents/src/components/shared
+cp -n DXComponents/src/components/shared/create-nonce.ts mydxcomponents/src/components/shared/
+```
+
+The widget itself only depends on packages that every DX project already has: `@pega/cosmos-react-core`, `react` and `styled-components`. `mock.ts` and `liveApi.ts` are used only by Storybook and the tests, not by the published widget.
+
+### Step 3 — Check it works locally (no Pega needed)
+
+**3a. Add the Jest polyfill.** Cosmos 9 uses two browser APIs, `Highlight` and `matchMedia`, that Jest's jsdom doesn't provide. Create `jest.polyfills.ts` in the project root:
+
+```ts
+// Runs before setupFiles.ts so @pega/cosmos-react-core 9.x can load under jsdom.
+class HighlightPolyfill extends Set<unknown> {}
+Object.assign(globalThis, { Highlight: HighlightPolyfill });
+
+const cssGlobal = globalThis as typeof globalThis & { CSS?: { highlights?: Map<string, unknown> } };
+if (!cssGlobal.CSS) {
+  Object.assign(globalThis, { CSS: { highlights: new Map() } });
+} else if (!cssGlobal.CSS.highlights) {
+  Object.defineProperty(cssGlobal.CSS, 'highlights', { value: new Map(), configurable: true });
+}
+
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: (query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: () => {},
+    removeListener: () => {},
+    addEventListener: () => {},
+    removeEventListener: () => {},
+    dispatchEvent: () => false
+  })
+});
+
+export {};
+```
+
+and load it first in `jest.config.cjs`:
+
+```js
+setupFiles: ['./jest.polyfills.ts', './setupFiles.ts'],
+```
+
+**3b. Run the checks:**
+
+```bash
+npm run lint                 # expect no errors in the component
+npx jest src/components/Virtusa_ClaudeDXComponents_TokenScrollList
+npm run startStorybook       # http://localhost:6040
+```
+
+Storybook opens on **Live API — Wikipedia**, real data paged with a continuation token, so you can see the widget working before you touch Pega.
+
+### Step 4 — Prepare Pega (one time)
+
+1. **OAuth client registration.** In Dev Studio, check that **Records → Security → OAuth 2.0 Client Registration → DX-ComponentDev** exists. If it doesn't, import `keys/DX-ComponentDev.zip` from your project via **Configure → Application → Distribution → Import**.
+2. **Ruleset.** Choose an **unlocked** ruleset version that is on your application's ruleset stack, for example your application's own ruleset (`MyApp:01-01-01`), or create a new one such as `CustomDXComponents:01-01-01` and add it to the application rule's **Application rulesets**.
+3. If you changed the application's rulesets, **log out of Studio and back in** so your session picks up the new stack.
+
+### Step 5 — Point the project at your Pega server
+
+Edit `tasks.config.json` in your project:
+
+```jsonc
+{
+  "server-config": {
+    "server": "https://<your-host>/prweb",
+    "rulesetName": "<RulesetFromStep4>",
+    "rulesetVersion": "01-01-01",
+    "sourceOfComponents": "Server",
+    "devBuild": false,
+    "grantType": "authCode", // browser login — no password stored in the file
+    "clientId": "10095186356008396159" // the DX-ComponentDev client
+  },
+  "component": { "library": "ClaudeDXComponents" },
+  "libraryModeCL": true
+}
+```
+
+> Never commit real passwords or client secrets. With `authCode` the `user`, `password` and `clientSecret` fields stay empty.
+
+### Step 6 — Create the component library
+
+In library mode, components are published as part of a **library**. Create it once:
+
+> **Commit or back up your project first.** `createLib` can reset top-level project files (for example `README.md` and config files) to the builder's template, even when you choose to keep your current configuration.
+
+```bash
+git init && git add -A && git commit -m "before createLib"   # if not already a git repo
+npm run createLib
+```
+
+| Prompt                                       | Answer                                                        |
+| -------------------------------------------- | ------------------------------------------------------------- |
+| Ok to continue?                              | `Y`                                                           |
+| Enter library name                           | `ClaudeDXComponents`                                          |
+| Enter version                                | `1.0.0`                                                       |
+| Current config changes or original defaults? | **`Current`** (option 1)                                      |
+| Would you like to update your code?          | `Y` — moves `create-nonce` into `shared/` and updates imports |
+
+Afterwards, run `git status` and restore anything the builder changed that you want to keep.
+
+### Step 7 — Publish to Pega
+
+```bash
+npm run authenticate     # a browser opens: accept the localhost certificate warning, log in to Pega
+npm run publish          # confirm the library, then the ruleset name and version from Step 4
+```
+
+It prints `Success : Component Library Virtusa_ClaudeDXComponents/<version> successfully created in ruleset <ruleset>`.
+
+> **Library versions are permanent.** After a version is published, the builder can't publish or delete it again. For the next change, create a new version first with `npm run createLibVersion`, choosing **Y** to copy the current components, then publish.
+
+> **Avoiding prompts:** you can drive `createLib`, `createLibVersion` and `publish` from an `input.config.json` file instead of answering prompts. Set `"useInputConfig": true` in `tasks.config.json` and add, for example:
+>
+> ```json
+> {
+>   "libraryMode": {
+>     "publish": { "okToPublish": true, "ruleSetName": "MyApp", "ruleSetVersion": "01-01-01" }
+>   },
+>   "standard": {}
+> }
+> ```
+
+### Step 8 — Enable the library for your application
+
+This is the step that's easy to miss. A published library **doesn't appear in Studio until it's enabled for the application.**
+
+1. In Infinity Studio, search for **`Virtusa_ClaudeDXComponents`**.
+2. Open the result of type **Component Library** (expand the row to pick the instance in your ruleset).
+3. On the **Components** tab, the first column is headed with your **application name and version** (for example `MyApp:01.01.01`). **Tick the checkbox** next to `Virtusa_ClaudeDXComponents_TokenScrollList`.
+
+The checkbox is **one setting per library for your application**, shared by every version of it. Unticking it on any version hides the widget for all versions.
+
+### Step 9 — Add the widget to a case type
+
+1. Open your case type → **UX** tab → **Full Page View**.
+2. Under **Utilities** (or **Summary → Add → Widgets**), click **+ Add**, filter for **Token**, tick **Token Scroll List** and click **Add**.
+3. Click the widget's **gear** icon and configure it (see [Configure it](#configure-it)): at least the **Heading** and **Data page name**.
+4. **Save** the case type.
+
+For a landing page instead: **Channels** → your portal's landing page → add **Token Scroll List** as a widget.
+
+### Step 10 — Give it data
+
+The widget reads a single-page data page that returns `Entries`, `NextIdentifier` and `IsLastPage`. Build it as described in:
+
+- [Part 1 — Build the data layer in Pega](#part-1--build-the-data-layer-in-pega), for your own API, or
+- [Part 4 — Use with a real-time API](#part-4--use-with-a-real-time-api-wikipedia-recent-changes), to test with Wikipedia first.
+
+Then set the widget's **Data page name**, open a case, and scroll the list in the Utilities pane.
+
+### Renaming to your own organization
+
+To publish the widget under your own names (for example `Acme_Widgets_TokenScrollList`):
+
+1. In Step 1, use **your** organization name. In Step 5, use **your** library name.
+2. Scaffold an empty widget with the builder, so the schema fields in `config.json` are generated correctly:
+   ```bash
+   npm run create     # type: Widget, subtype: PAGE & CASE, name: TokenScrollList
+   ```
+3. Copy every file **except `config.json`** from `Virtusa_ClaudeDXComponents_TokenScrollList/` into the new `Acme_Widgets_TokenScrollList/` folder.
+4. In the new folder's `config.json`, replace `label`, `description`, `properties` and `defaultConfig` with the ones from this repo's `config.json`. Keep the generated `name`, `componentKey`, `organization` and `library`.
+5. Search and replace the exported component name `VirtusaClaudeDxComponentsTokenScrollList` → `AcmeWidgetsTokenScrollList` in `index.tsx`, `demo.stories.tsx` and `demo.test.tsx`.
+6. Run Step 3b again, then continue from Step 6.
+
+### Other Pega versions
+
+| Your Pega    | Builder to use in Step 1              | Differences                                                                                                                                                                                                                                          |
+| ------------ | ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Infinity '26 | `@pega/custom-dx-components@~26.1.11` | As above                                                                                                                                                                                                                                             |
+| Infinity '25 | `@pega/custom-dx-components@~25.1.26` | Cosmos 8: remove `jest.polyfills.ts` if tests fail on it. You can publish in standalone component mode (`"libraryModeCL": false`, then `npm run publish`, which skips Steps 6 and 8). The widget then appears in App Studio's widget lists directly. |
+
+Whatever the version, property formats in `config.json` must be valid for it. Infinity '26 rejects `INTEGER`, `DECIMAL`, `DATE` and `DATETIME`, and this widget uses `NUMBER` for _Records per request_.
+
+---
+
 ## Troubleshooting
 
-| Symptom                                   | Check                                                                                                                                                                |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| _Configure a data page to load records_   | _Data page name_ is empty                                                                                                                                            |
-| _Additional parameters is not valid JSON_ | Use double quotes: `{"fromDate":"2024-07-12"}`                                                                                                                       |
-| Only the first chunk ever loads           | The data page result has no token at the configured _Next token property_ path, or `IsLastPage` is always true. Run the data page in Dev Studio and check the result |
-| The same rows repeat                      | The connector ignores `startIdentifier` — check the request data transform                                                                                           |
-| 403 / 401 in the browser network tab      | The access group cannot run the data page through the DX API (see Part 1, step 4)                                                                                    |
-| _No records found_                        | The API returned an empty `entries` list for the parameters sent                                                                                                     |
-| Component not listed in Studio            | The publish targeted a ruleset version that is not on the application stack, or the version was locked                                                               |
+| Symptom                                                     | Check                                                                                                                                                                                                |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| _Configure a data page to load records_                     | _Data page name_ is empty                                                                                                                                                                            |
+| _Additional parameters is not valid JSON_                   | Use double quotes: `{"fromDate":"2024-07-12"}`                                                                                                                                                       |
+| Only the first chunk ever loads                             | The data page result has no token at the configured _Next token property_ path, or `IsLastPage` is always true. Run the data page in Dev Studio and check the result                                 |
+| The same rows repeat                                        | The connector ignores `startIdentifier` — check the request data transform                                                                                                                           |
+| 403 / 401 in the browser network tab                        | The access group cannot run the data page through the DX API (see Part 1, step 4)                                                                                                                    |
+| _No records found_                                          | The API returned an empty `entries` list for the parameters sent                                                                                                                                     |
+| Component not listed in Studio                              | The publish targeted a ruleset version that is not on the application stack, or the version was locked                                                                                               |
+| Widget missing from the case type's widget picker ('26)     | The library isn't enabled for the application. Tick the application checkbox on the **Component Library** rule ([Part 5, Step 8](#step-8--enable-the-library-for-your-application))                  |
+| _Unknown format 'INTEGER'_ in the widget's configure dialog | An old library version with an invalid property format is still active. Use this repo's current `config.json` (`NUMBER`), publish a new version, and delete the old version's Component Library rule |
+| _Given ruleset doesnt exist_ on publish                     | The ruleset in `tasks.config.json` / `input.config.json` doesn't exist. Create it or use an existing unlocked one ([Part 5, Step 4](#step-4--prepare-pega-one-time))                                 |
+| Publish sits for minutes                                    | Normal in library mode: the whole library is rebuilt and archived before upload. Don't stop it while it's building                                                                                   |
+| Case type shows _SAVE FAILED_ after adding the widget       | Check the error in your own Studio session. Common causes: the case type's view rules are in a locked ruleset version or must be saved through a development branch                                  |
+| `ReferenceError: Highlight is not defined` in Jest          | Add `jest.polyfills.ts` ([Part 5, Step 3a](#step-3--check-it-works-locally-no-pega-needed))                                                                                                          |
 
 ---
 
