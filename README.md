@@ -13,8 +13,6 @@ Use the branch that matches your Pega version. Other Pega versions have not been
 
 A live demonstration of every component is available at **[atanus1502.github.io/constellation-dx-components](https://atanus1502.github.io/constellation-dx-components/)**.
 
-Pre-built versions of the component library are attached to each [release](https://github.com/atanus1502/constellation-dx-components/releases).
-
 ## Components
 
 | Component                                                                   | Type                 | Description                                                                                                                           |
@@ -28,9 +26,9 @@ Each component folder has a README with its properties, the data it expects and 
 
 ## Use the components in your Pega application
 
-All components ship as one Constellation component library, `Claude_DXComponents`. There are two ways to get it into Pega.
+All components ship as one Constellation component library, `Claude_DXComponents`. To get it into Pega, publish it from source:
 
-### Option A — Publish from source (recommended)
+### Publish from source
 
 **On your machine**
 
@@ -97,26 +95,6 @@ You also need network access to the npm registry and to your Pega server, and lo
 
 7. Add a component to your UI: for widgets, open the case type or landing page in App Studio, go to the **UX** tab and add the widget (for example to the case **Utilities** pane). For fields, select the property in a view and choose the component from its **Display as** list.
 
-### Option B — Import a pre-built library
-
-Every [release](https://github.com/atanus1502/constellation-dx-components/releases) has the library archive `Claude_DXComponents_<version>.arch.zip`. This is the same archive kept in this repository under `store/`, so it is useful when you want a specific version without cloning a branch.
-
-1. Create a DX Component Builder project for your Pega version ([Pega documentation][dx-initialize]):
-
-   ```shell
-   npx @pega/custom-dx-components@~26.1.11 init   # Infinity '26.1 — use ~25.1.26 for '25.1
-   ```
-
-2. Download the `.arch.zip` from the release into your `Downloads` folder, then run:
-
-   ```shell
-   npm run importLibVersion
-   ```
-
-   Choose **Local directory**, accept the suggested `Downloads` path (or type the folder you saved the zip to), and select the zip. The components are unpacked into `src/components/` and the library version is set up in `store/`.
-
-3. Continue with steps 3–7 of Option A.
-
 ## Use only one component
 
 Every component folder is self-contained: it needs nothing from other folders in this repository. You can take just the one you want, in either of two ways. The examples use TokenScrollList; swap in the folder name of the component you need (see [Components](#components)).
@@ -132,7 +110,7 @@ git sparse-checkout set --no-cone '/*' '!/src/components/*/' '/src/components/Cl
 npm install
 ```
 
-Then continue with [Option A](#option-a--publish-from-source-recommended) from the `keys` step. The library you publish contains only that component. If you later want more components on the same Pega server, add their folders (`git sparse-checkout add /src/components/<folder>/`) and publish them under a new library version (`npm run createLibVersion`), because published versions are permanent.
+Then continue with [Publish from source](#publish-from-source) from the `keys` step. The library you publish contains only that component. If you later want more components on the same Pega server, add their folders (`git sparse-checkout add /src/components/<folder>/`) and publish them under a new library version (`npm run createLibVersion`), because published versions are permanent.
 
 ### Way 2 — Import it into your own DX project
 
@@ -241,7 +219,7 @@ npm run buildAllComponents
 npm run storeLibVersion    # writes store/Claude_DXComponents/<version>/
 ```
 
-Commit the new `store/` folder, then attach its `.arch.zip` to a GitHub release named `<version> - Pega <release>`.
+Commit the new `store/` folder.
 
 ### Continuous integration
 
