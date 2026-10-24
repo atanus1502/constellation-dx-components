@@ -60,7 +60,7 @@ export const createWikipediaDataPage =
   async (_dataPage: string, _context?: string, parameters?: Record<string, unknown>) => {
     const res = await fetchImpl(buildWikipediaUrl(parameters), {
       headers: {
-        'Api-User-Agent': 'PegaDXTokenScrollListStorybook/1.0 (github.com/atanus1502/DXComponents)'
+        'Api-User-Agent': 'PegaDXTokenScrollListStorybook/1.0 (github.com/atanus1502/constellation-dx-components)'
       }
     });
     if (!res.ok) throw new Error(`Wikipedia API returned HTTP ${res.status}`);

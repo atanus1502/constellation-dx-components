@@ -6,14 +6,14 @@ Use them as they are, or take the source as a starting point for your own compon
 
 | Library version | Branch                                                                       | Pega Platform  | DX Component Builder |
 | --------------- | ---------------------------------------------------------------------------- | -------------- | -------------------- |
-| 2.x             | [`main`](https://github.com/atanus1502/DXComponents/tree/main)               | Infinity '26.1 | `~26.1.11`           |
-| 1.x             | [`release/1.x`](https://github.com/atanus1502/DXComponents/tree/release/1.x) | Infinity '25.1 | `~25.1.26`           |
+| 2.x             | [`main`](https://github.com/atanus1502/constellation-dx-components/tree/main)               | Infinity '26.1 | `~26.1.11`           |
+| 1.x             | [`release/1.x`](https://github.com/atanus1502/constellation-dx-components/tree/release/1.x) | Infinity '25.1 | `~25.1.26`           |
 
 Use the branch that matches your Pega version. Other Pega versions have not been tested and are not supported.
 
-A live demonstration of every component is available at **[atanus1502.github.io/DXComponents](https://atanus1502.github.io/DXComponents/)**.
+A live demonstration of every component is available at **[atanus1502.github.io/constellation-dx-components](https://atanus1502.github.io/constellation-dx-components/)**.
 
-Pre-built versions of the component library are attached to each [release](https://github.com/atanus1502/DXComponents/releases).
+Pre-built versions of the component library are attached to each [release](https://github.com/atanus1502/constellation-dx-components/releases).
 
 ## Components
 
@@ -37,9 +37,9 @@ You need Git, Node.js 24.4.1+ and npm 11.4.2+, and on the Pega side an operator 
 1. Clone the branch that matches your Pega version. Use `git clone`, not the GitHub "Download ZIP" option: the builder needs the `.git` folder and reports `Git needs to be installed` without it.
 
    ```shell
-   git clone https://github.com/atanus1502/DXComponents.git     # Infinity '26.1
-   git clone -b release/1.x https://github.com/atanus1502/DXComponents.git   # Infinity '25.1
-   cd DXComponents
+   git clone https://github.com/atanus1502/constellation-dx-components.git     # Infinity '26.1
+   git clone -b release/1.x https://github.com/atanus1502/constellation-dx-components.git   # Infinity '25.1
+   cd constellation-dx-components
    npm install
    ```
 
@@ -79,7 +79,7 @@ You need Git, Node.js 24.4.1+ and npm 11.4.2+, and on the Pega side an operator 
 
 ### Option B — Import a pre-built library
 
-Every [release](https://github.com/atanus1502/DXComponents/releases) has the library archive `Virtusa_ClaudeDXComponents_<version>.arch.zip`. This is the same archive kept in this repository under `store/`, so it is useful when you want a specific version without cloning a branch.
+Every [release](https://github.com/atanus1502/constellation-dx-components/releases) has the library archive `Virtusa_ClaudeDXComponents_<version>.arch.zip`. This is the same archive kept in this repository under `store/`, so it is useful when you want a specific version without cloning a branch.
 
 1. Create a DX Component Builder project for your Pega version ([Pega documentation][dx-initialize]):
 
@@ -183,7 +183,7 @@ Commit the new `store/` folder, then attach its `.arch.zip` to a GitHub release 
 ### Continuous integration
 
 - **Validate PRs** (`.github/workflows/validatepr.yaml`) runs lint, type-check, unit tests and the Storybook build on every pull request.
-- **Deploy to GitHub Pages** (`.github/workflows/deploy-github-pages.yaml`) publishes Storybook to [atanus1502.github.io/DXComponents](https://atanus1502.github.io/DXComponents/) on every push to `main`.
+- **Deploy to GitHub Pages** (`.github/workflows/deploy-github-pages.yaml`) publishes Storybook to [atanus1502.github.io/constellation-dx-components](https://atanus1502.github.io/constellation-dx-components/) on every push to `main`.
 
 If deploying to Pega fails, see the [DX Component Builder command-line reference][dx-cli].
 

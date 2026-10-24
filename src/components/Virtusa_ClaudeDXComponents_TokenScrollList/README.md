@@ -425,7 +425,7 @@ Once this works, swap in your own service:
 
 ## Part 5 — Use this component in your own Pega application
 
-A step-by-step guide for taking this component from [github.com/atanus1502/DXComponents](https://github.com/atanus1502/DXComponents) and using it in **your** Pega application. It assumes Pega Infinity '26 — for other releases see [Other Pega versions](#other-pega-versions).
+A step-by-step guide for taking this component from [github.com/atanus1502/constellation-dx-components](https://github.com/atanus1502/constellation-dx-components) and using it in **your** Pega application. It assumes Pega Infinity '26 — for other releases see [Other Pega versions](#other-pega-versions).
 
 **You will end up with:** a DX Component Builder project on your machine containing this widget, the widget published to your Pega instance as a component library, enabled for your application, and added to a case type.
 
@@ -463,7 +463,7 @@ Then `cd mydxcomponents`. Init runs `npm install` for you.
 
 ```bash
 # from any folder outside your project
-git clone https://github.com/atanus1502/DXComponents.git
+git clone https://github.com/atanus1502/constellation-dx-components.git
 ```
 
 Copy into your project's `src/components/` folder:
