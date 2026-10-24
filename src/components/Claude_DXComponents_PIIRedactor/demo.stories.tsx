@@ -4,11 +4,11 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import { stateProps, configProps } from './mock';
 
-import VirtusaClaudeDxComponentsPiiRedactor from './index';
+import ClaudeDxComponentsPiiRedactor from './index';
 
-const meta: Meta<typeof VirtusaClaudeDxComponentsPiiRedactor> = {
-  title: 'VirtusaClaudeDxComponentsPiiRedactor',
-  component: VirtusaClaudeDxComponentsPiiRedactor,
+const meta: Meta<typeof ClaudeDxComponentsPiiRedactor> = {
+  title: 'ClaudeDxComponentsPiiRedactor',
+  component: ClaudeDxComponentsPiiRedactor,
   excludeStories: /.*Data$/,
   argTypes: {
     preset: {
@@ -19,7 +19,7 @@ const meta: Meta<typeof VirtusaClaudeDxComponentsPiiRedactor> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof VirtusaClaudeDxComponentsPiiRedactor>;
+type Story = StoryObj<typeof ClaudeDxComponentsPiiRedactor>;
 
 const Template = (args: any) => {
   const [value, setValue] = useState(args.value ?? configProps.value);
@@ -42,7 +42,7 @@ const Template = (args: any) => {
     }
   };
 
-  return <VirtusaClaudeDxComponentsPiiRedactor {...props} {...args} value={value} />;
+  return <ClaudeDxComponentsPiiRedactor {...props} {...args} value={value} />;
 };
 
 const baseArgs = {

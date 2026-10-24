@@ -34,7 +34,7 @@ describe('redactValue', () => {
   });
 });
 
-describe('VirtusaClaudeDxComponentsPiiRedactor', () => {
+describe('ClaudeDxComponentsPiiRedactor', () => {
   it('displays a redacted card number', async () => {
     render(<CardNumber />);
     expect(await screen.findByText('•••• •••• •••• 1234')).toBeVisible();

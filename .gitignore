@@ -155,7 +155,7 @@ keys/
 .DS_Store
 
 # DX builder library-mode build output (<Org>_<Library>/<version>/)
-/Virtusa_*/
+/Claude_*/
 
 # Static Storybook build (deployed to GitHub Pages by CI)
 storybook-static/

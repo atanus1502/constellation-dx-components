@@ -42,7 +42,7 @@ export default defineConfig([
     'dist/*',
     'lib/*',
     'constellation-ui-gallery/**',
-    'Virtusa_*/**',
+    'Claude_*/**',
     'storybook-static/**',
     'store/**'
   ]),

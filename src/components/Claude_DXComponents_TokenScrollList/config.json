@@ -1,11 +1,11 @@
 {
-    "name": "Virtusa_ClaudeDXComponents_TokenScrollList",
+    "name": "Claude_DXComponents_TokenScrollList",
     "label": "Token Scroll List",
     "description": "Infinite-scroll list for APIs that page with a continuation token",
-    "organization": "Virtusa",
+    "organization": "Claude",
     "version": "0.0.3",
-    "library": "ClaudeDXComponents",
-    "componentKey": "Virtusa_ClaudeDXComponents_TokenScrollList",
+    "library": "DXComponents",
+    "componentKey": "Claude_DXComponents_TokenScrollList",
     "type": "Widget",
     "subtype": [
         "PAGE",
@@ -114,7 +114,7 @@
         },
         {
             "format": "LABEL",
-            "label": "Virtusa_ClaudeDXComponents 0.0.3, Fri Oct 23 2026, 26.1.0-103357",
+            "label": "Claude_DXComponents 0.0.3, Fri Oct 23 2026, 26.1.0-103357",
             "name": "PegaAboutData",
             "variant": "primary"
         }

@@ -4,12 +4,12 @@ import { Input, Text, withConfiguration, type Action } from '@pega/cosmos-react-
 import type { PConnFieldProps } from './PConnProps';
 import './create-nonce';
 
-import StyledVirtusaClaudeDxComponentsPiiRedactorWrapper from './styles';
+import StyledClaudeDxComponentsPiiRedactorWrapper from './styles';
 
 type Preset = 'Card Number' | 'SSN' | 'Phone' | 'Email' | 'Generic';
 
 // interface for props
-interface VirtusaClaudeDxComponentsPiiRedactorProps extends PConnFieldProps {
+interface ClaudeDxComponentsPiiRedactorProps extends PConnFieldProps {
   /** Which PII format to redact as */
   preset?: Preset;
   /** Number of trailing characters left visible — only used by the Generic preset */
@@ -75,7 +75,7 @@ export const redactValue = (preset: Preset, value: string, visibleChars = 4): st
 
 // props passed in combination of props from property panel (config.json) and run time props from Constellation
 // any default values in config.pros should be set in defaultProps at bottom of this file
-function VirtusaClaudeDxComponentsPiiRedactor(props: VirtusaClaudeDxComponentsPiiRedactorProps) {
+function ClaudeDxComponentsPiiRedactor(props: ClaudeDxComponentsPiiRedactorProps) {
   const {
     getPConnect,
     value,
@@ -108,9 +108,9 @@ function VirtusaClaudeDxComponentsPiiRedactor(props: VirtusaClaudeDxComponentsPi
 
   if (displayMode === 'DISPLAY_ONLY' || readOnly) {
     return (
-      <StyledVirtusaClaudeDxComponentsPiiRedactorWrapper>
+      <StyledClaudeDxComponentsPiiRedactorWrapper>
         <Text data-testid={testId}>{redacted || <span aria-hidden='true'>&ndash;&ndash;</span>}</Text>
-      </StyledVirtusaClaudeDxComponentsPiiRedactorWrapper>
+      </StyledClaudeDxComponentsPiiRedactorWrapper>
     );
   }
 
@@ -122,7 +122,7 @@ function VirtusaClaudeDxComponentsPiiRedactor(props: VirtusaClaudeDxComponentsPi
   };
 
   return (
-    <StyledVirtusaClaudeDxComponentsPiiRedactorWrapper>
+    <StyledClaudeDxComponentsPiiRedactorWrapper>
       <Input
         type={revealed ? 'text' : 'password'}
         value={value}
@@ -135,8 +135,8 @@ function VirtusaClaudeDxComponentsPiiRedactor(props: VirtusaClaudeDxComponentsPi
         actions={[revealToggle]}
         testId={testId}
       />
-    </StyledVirtusaClaudeDxComponentsPiiRedactorWrapper>
+    </StyledClaudeDxComponentsPiiRedactorWrapper>
   );
 }
 
-export default withConfiguration(VirtusaClaudeDxComponentsPiiRedactor);
+export default withConfiguration(ClaudeDxComponentsPiiRedactor);

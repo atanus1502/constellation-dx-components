@@ -11,10 +11,10 @@ import {
 import type { PConnProps } from './PConnProps';
 import './create-nonce';
 
-import StyledVirtusaClaudeDxComponentsCaseSummaryWidgetWrapper from './styles';
+import StyledClaudeDxComponentsCaseSummaryWidgetWrapper from './styles';
 
 // interface for props
-export interface VirtusaClaudeDxComponentsCaseSummaryWidgetProps extends PConnProps {
+export interface ClaudeDxComponentsCaseSummaryWidgetProps extends PConnProps {
   /** Widget label, shown as a heading fallback when no caseID is available */
   label?: string;
   /** Case identifier (e.g. MYAPP-WORK C-1001) */
@@ -44,14 +44,14 @@ const formatLastUpdated = (value: string): string => {
   return date.toLocaleString();
 };
 
-export function VirtusaClaudeDxComponentsCaseSummaryWidget(
-  props: VirtusaClaudeDxComponentsCaseSummaryWidgetProps
+export function ClaudeDxComponentsCaseSummaryWidget(
+  props: ClaudeDxComponentsCaseSummaryWidgetProps
 ) {
   const { getPConnect, label = 'Case Summary', caseID, status, customerName, lastUpdated } = props;
   const pConn = getPConnect();
 
   return (
-    <StyledVirtusaClaudeDxComponentsCaseSummaryWidgetWrapper>
+    <StyledClaudeDxComponentsCaseSummaryWidgetWrapper>
       <Card>
         <CardHeader>
           <Flex container={{ justify: 'between', alignItems: 'center' }}>
@@ -70,8 +70,8 @@ export function VirtusaClaudeDxComponentsCaseSummaryWidget(
           </Flex>
         </CardContent>
       </Card>
-    </StyledVirtusaClaudeDxComponentsCaseSummaryWidgetWrapper>
+    </StyledClaudeDxComponentsCaseSummaryWidgetWrapper>
   );
 }
 
-export default withConfiguration(VirtusaClaudeDxComponentsCaseSummaryWidget);
+export default withConfiguration(ClaudeDxComponentsCaseSummaryWidget);
