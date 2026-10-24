@@ -1,0 +1,31 @@
+# Lints, type-checks, tests and builds Storybook for every PR
+name: Validate PRs
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: ['main', 'release/**']
+  pull_request:
+    branches: ['main', 'release/**']
+
+jobs:
+  build:
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Lint
+        run: npm run lint
+      - name: Type check
+        run: npx tsc --noEmit
+      - name: Unit tests
+        run: npm run test
+      - name: Build Storybook
+        run: npm run build-storybook

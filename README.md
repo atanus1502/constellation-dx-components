@@ -1,51 +1,191 @@
-# Using Custom Components in Constellation
+# Virtusa Claude DX Components
 
-> Components in this repo were built with **Claude Code** — from scaffolding via the DX Component Builder CLI through implementation, Storybook review, and publishing to Pega Infinity.
+A collection of ready-to-use Constellation DX components (widgets and fields) for Pega Infinity, built with **Claude Code**: scaffolded with the DX Component Builder CLI, then implemented, reviewed in Storybook and published to Pega Infinity.
 
-## Overview
+Use them as they are, or take the source as a starting point for your own components.
 
-This project provides you with an environment to extend Constellation by giving you tools to create and publish custom components that are not available from the Constellation installation.
+| Library version | Branch                                                                       | Pega Platform  | DX Component Builder |
+| --------------- | ---------------------------------------------------------------------------- | -------------- | -------------------- |
+| 2.x             | [`main`](https://github.com/atanus1502/DXComponents/tree/main)               | Infinity '26.1 | `~26.1.11`           |
+| 1.x             | [`release/1.x`](https://github.com/atanus1502/DXComponents/tree/release/1.x) | Infinity '25.1 | `~25.1.26`           |
 
-## Before you begin
+Use the branch that matches your Pega version. Other Pega versions have not been tested and are not supported.
 
-Review the following checklist before you create a Constellation DX component:
+A live demonstration of every component is available at **[atanus1502.github.io/DXComponents](https://atanus1502.github.io/DXComponents/)**.
 
-## Design considerations
-
-Involve an Experience Designer in your process. This will help you determine the exact issue to be resolved.
-
-## The Experience Designer must meet the following requirements:
-
-Must have a background in UI and UX design.
-Must understand Pega's best practices for design.
-
-## Functionality considerations
-
-Check if an existing component in App Studio contains the features you need. If not, check for existing components that contain similar features.
-Connect with Pega Support to find out if a component containing a similar feature will be included in the next release. If yes, assess if you can wait for the next release.
-
-## Maintenance considerations
-
-Ensure you have the bandwidth to maintain the Constellation DX component and keep it up-to-date with every release of Pega Infinity. Evaluate if doing this might prevent you from upgrading to future releases of Pega Infinity.
-Evaluate if you are able to meet the compliance standards for data privacy and accessibility for Constellation DX components. Note that not meeting these standards might lead to legal compliance issues.
-
-## Prerequisites
-
-Ensure you have access to the following in your system:
-
-- Pega Infinity Server version 25.1 or later
-
-- Git version 2.30 or later
-
-- System node version >= 24.4.1
-
-- System npm version 11.4.2
+Pre-built versions of the component library are attached to each [release](https://github.com/atanus1502/DXComponents/releases).
 
 ## Components
 
-| Component | Type | Description |
-|-----------|------|-------------|
-| [CaseSummaryWidget](src/components/Virtusa_ClaudeDXComponents_CaseSummaryWidget) | Widget (CASE) | Displays case ID, status, customer name, and last-updated timestamp |
-| [PIIRedactor](src/components/Virtusa_ClaudeDXComponents_PIIRedactor) | Field (Text) | Redacted display of card numbers, SSNs, phone, email, and generic values, with a masked-input edit mode |
-| [SLADeadlineTracker](src/components/Virtusa_ClaudeDXComponents_SLADeadlineTracker) | Widget (PAGE) | Landing-page dashboard of SLA/deadline status across active cases, with click-to-open case links |
-| [TokenScrollList](src/components/Virtusa_ClaudeDXComponents_TokenScrollList) | Widget (PAGE & CASE) | Infinite-scroll table for third-party APIs that page with a continuation token (`nextIdentifier` → `startIdentifier`); includes Pega data page setup, publishing and App Studio usage guide |
+| Component                                                                          | Type                 | Description                                                                                                                           |
+| ---------------------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| [CaseSummaryWidget](src/components/Virtusa_ClaudeDXComponents_CaseSummaryWidget)   | Widget (CASE)        | Displays case ID, status, customer name and last-updated timestamp                                                                    |
+| [PIIRedactor](src/components/Virtusa_ClaudeDXComponents_PIIRedactor)               | Field (Text)         | Redacted display of card numbers, SSNs, phone numbers, emails and generic values, with a masked-input edit mode                       |
+| [SLADeadlineTracker](src/components/Virtusa_ClaudeDXComponents_SLADeadlineTracker) | Widget (PAGE)        | Landing-page dashboard of SLA and deadline status across active cases, with click-to-open case links                                  |
+| [TokenScrollList](src/components/Virtusa_ClaudeDXComponents_TokenScrollList)       | Widget (PAGE & CASE) | Infinite-scroll table for third-party APIs that page with a continuation token; its README covers the Pega data page setup end to end |
+
+Each component folder has a README with its properties, the data it expects and how to configure it in App Studio.
+
+## Use the components in your Pega application
+
+All components ship as one Constellation component library, `Virtusa_ClaudeDXComponents`. There are two ways to get it into Pega.
+
+### Option A — Publish from source (recommended)
+
+You need Git, Node.js 24.4.1+ and npm 11.4.2+, and on the Pega side an operator with developer access to your application and an **unlocked** ruleset version to publish into.
+
+1. Clone the branch that matches your Pega version. Use `git clone`, not the GitHub "Download ZIP" option: the builder needs the `.git` folder and reports `Git needs to be installed` without it.
+
+   ```shell
+   git clone https://github.com/atanus1502/DXComponents.git     # Infinity '26.1
+   git clone -b release/1.x https://github.com/atanus1502/DXComponents.git   # Infinity '25.1
+   cd DXComponents
+   npm install
+   ```
+
+2. In Pega, make sure the OAuth 2.0 client registration **DX-ComponentDev** exists (Dev Studio → Records → Security → OAuth 2.0 Client Registration). If not, import it as described in [Pega's documentation][dx-initialize].
+
+3. Edit `tasks.config.json` and fill in your server and ruleset:
+
+   ```json
+   "server-config": {
+     "rulesetName": "YourAppRuleset",
+     "rulesetVersion": "01-01-01",
+     "server": "https://your-server/prweb",
+     "clientId": "<client ID of DX-ComponentDev>",
+     "grantType": "authCode",
+     ...
+   }
+   ```
+
+4. Authenticate. A browser window opens for you to log in to Pega:
+
+   ```shell
+   npm run authenticate
+   ```
+
+5. Publish the library. When asked, confirm the ruleset and choose whether to publish the version as permanent:
+
+   ```shell
+   npm run publish
+   ```
+
+6. In Pega, enable the library for your application:
+
+   - **Infinity '26:** App Studio → **User Interface → Component Library**, open `Virtusa_ClaudeDXComponents`, and on the **Components** tab tick the checkbox in the column headed `<YourApp>:<version>`.
+   - **Infinity '25:** the components appear in App Studio once published.
+
+7. Add a component to your UI: for widgets, open the case type or landing page in App Studio, go to the **UX** tab and add the widget (for example to the case **Utilities** pane). For fields, select the property in a view and choose the component from its **Display as** list.
+
+### Option B — Import a pre-built library
+
+Every [release](https://github.com/atanus1502/DXComponents/releases) has the library archive `Virtusa_ClaudeDXComponents_<version>.arch.zip`. This is the same archive kept in this repository under `store/`, so it is useful when you want a specific version without cloning a branch.
+
+1. Create a DX Component Builder project for your Pega version ([Pega documentation][dx-initialize]):
+
+   ```shell
+   npx @pega/custom-dx-components@~26.1.11 init   # Infinity '26.1 — use ~25.1.26 for '25.1
+   ```
+
+2. Download the `.arch.zip` from the release into your `Downloads` folder, then run:
+
+   ```shell
+   npm run importLibVersion
+   ```
+
+   Choose **Local directory**, accept the suggested `Downloads` path (or type the folder you saved the zip to), and select the zip. The components are unpacked into `src/components/` and the library version is set up in `store/`.
+
+3. Continue with steps 3–7 of Option A.
+
+## For developers
+
+### Tools to install
+
+Install Node.js 24.x and npm 11.x from [nodejs.org](https://nodejs.org/en/download/).
+
+For more details on building Constellation DX components, see [docs.pega.com][dx-initialize].
+
+### Project setup
+
+```shell
+npm install
+```
+
+### Storybook
+
+```shell
+npm run start
+```
+
+Storybook opens on [localhost:6040](http://localhost:6040). Every component has stories with mocked data; TokenScrollList also has stories that call the live Wikipedia API.
+
+### Linting
+
+Before checking in code, make sure no errors are reported:
+
+```shell
+npm run lint
+npx tsc --noEmit
+```
+
+To fix some of the issues:
+
+```shell
+npm run fix
+```
+
+### Unit testing
+
+```shell
+npm run test
+```
+
+For a coverage report (written to `coverage/index.html`):
+
+```shell
+npm run coverage
+```
+
+### Build
+
+Build all components into the library:
+
+```shell
+npm run buildAllComponents
+```
+
+To build one component:
+
+```shell
+npm run buildComponent
+```
+
+### Add a new component
+
+```shell
+npm run create
+```
+
+Use organization `Virtusa` and library `ClaudeDXComponents`, so the component is named `Virtusa_ClaudeDXComponents_<Name>`. Each component needs `index.tsx`, `config.json`, `mock.ts`, `demo.stories.tsx`, `demo.test.tsx`, `docs.mdx` and a `README.md`.
+
+### Release a new library version
+
+Library versions are permanent once published, so bump the version for every release:
+
+```shell
+npm run createLibVersion   # e.g. 2.0.1 — copies the current components into the new version
+npm run buildAllComponents
+npm run storeLibVersion    # writes store/Virtusa_ClaudeDXComponents/<version>/
+```
+
+Commit the new `store/` folder, then attach its `.arch.zip` to a GitHub release named `<version> - Pega <release>`.
+
+### Continuous integration
+
+- **Validate PRs** (`.github/workflows/validatepr.yaml`) runs lint, type-check, unit tests and the Storybook build on every pull request.
+- **Deploy to GitHub Pages** (`.github/workflows/deploy-github-pages.yaml`) publishes Storybook to [atanus1502.github.io/DXComponents](https://atanus1502.github.io/DXComponents/) on every push to `main`.
+
+If deploying to Pega fails, see the [DX Component Builder command-line reference][dx-cli].
+
+[dx-initialize]: https://docs.pega.com/bundle/constellation-dx-components/page/constellation-dx-components/custom-components/initialize-project.html
+[dx-cli]: https://docs.pega.com/bundle/constellation-dx-components/page/constellation-dx-components/custom-components/command-line-references-constellation-dx-components.html

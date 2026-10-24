@@ -1,0 +1,18 @@
+{
+  "extends": "@pega/tsconfig/index.json",
+  "include": ["./**/*", ".storybook/**/*"],
+  "exclude": ["**/*.mjs", "constellation-ui-gallery", "node_modules"],
+  "compilerOptions": {
+    "noEmit": true,
+    "allowJs": true,
+    "importsNotUsedAsValues": "remove",
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "paths": {
+      "@pega/pcore-pconnect-typedefs/*": ["node_modules/@pega/pcore-pconnect-typedefs/*"]
+    },
+    "esModuleInterop": true,
+    "types": ["jest", "node", "@types/jest", "@pega/pcore-pconnect-typedefs"],
+    "verbatimModuleSyntax": false
+  }
+}

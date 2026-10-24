@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components';
+import { defaultThemeProp } from '@pega/cosmos-react-core';
 
-export default styled.div(({ theme }) => {
+const StyledSLADeadlineTracker = styled.div(({ theme }) => {
   return css`
     margin: 0px 0;
     padding: 1.5rem;
@@ -109,3 +110,7 @@ export default styled.div(({ theme }) => {
     }
   `;
 });
+
+StyledSLADeadlineTracker.defaultProps = defaultThemeProp;
+
+export default StyledSLADeadlineTracker;

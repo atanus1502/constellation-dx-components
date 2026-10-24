@@ -1,7 +1,8 @@
 // individual style, comment out above, and uncomment here and add styles
 import styled, { css } from 'styled-components';
+import { defaultThemeProp } from '@pega/cosmos-react-core';
 
-export default styled.div(({ theme }) => {
+const StyledPIIRedactor = styled.div(({ theme }) => {
   return css`
     margin: 0px 0;
 
@@ -13,3 +14,7 @@ export default styled.div(({ theme }) => {
     }
   `;
 });
+
+StyledPIIRedactor.defaultProps = defaultThemeProp;
+
+export default StyledPIIRedactor;
