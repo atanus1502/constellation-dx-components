@@ -4,8 +4,8 @@ A collection of ready-to-use Constellation DX components (widgets and fields) fo
 
 Use them as they are, or take the source as a starting point for your own components.
 
-| Library version | Branch                                                                       | Pega Platform  | DX Component Builder |
-| --------------- | ---------------------------------------------------------------------------- | -------------- | -------------------- |
+| Library version | Branch                                                                                      | Pega Platform  | DX Component Builder |
+| --------------- | ------------------------------------------------------------------------------------------- | -------------- | -------------------- |
 | 2.x             | [`main`](https://github.com/atanus1502/constellation-dx-components/tree/main)               | Infinity '26.1 | `~26.1.11`           |
 | 1.x             | [`release/1.x`](https://github.com/atanus1502/constellation-dx-components/tree/release/1.x) | Infinity '25.1 | `~25.1.26`           |
 
@@ -32,7 +32,19 @@ All components ship as one Constellation component library, `Virtusa_ClaudeDXCom
 
 ### Option A — Publish from source (recommended)
 
-You need Git, Node.js 24.4.1+ and npm 11.4.2+, and on the Pega side an operator with developer access to your application and an **unlocked** ruleset version to publish into.
+**On your machine**
+
+| Tool          | Version                         | Check                                                 |
+| ------------- | ------------------------------- | ----------------------------------------------------- |
+| Git           | 2.30+                           | `git --version`                                       |
+| Node.js       | 24.x (24.4.1+)                  | `node -v`                                             |
+| npm           | 11.4.2+ (comes with Node.js 24) | `npm -v`                                              |
+| A web browser | any current one                 | used for the Pega login during `npm run authenticate` |
+| A code editor | optional — VS Code recommended  |                                                       |
+
+You also need network access to the npm registry and to your Pega server, and local port **4010** free (the login redirect goes to `https://localhost:4010`). Nothing else is installed globally — the DX Component Builder, Storybook and the test tools come from `npm install`.
+
+**In Pega**: an operator with developer access to your Constellation application, and an **unlocked** ruleset version to publish into (not a branch ruleset).
 
 1. Clone the branch that matches your Pega version. Use `git clone`, not the GitHub "Download ZIP" option: the builder needs the `.git` folder and reports `Git needs to be installed` without it.
 
@@ -43,7 +55,15 @@ You need Git, Node.js 24.4.1+ and npm 11.4.2+, and on the Pega side an operator 
    npm install
    ```
 
-2. In Pega, make sure the OAuth 2.0 client registration **DX-ComponentDev** exists (Dev Studio → Records → Security → OAuth 2.0 Client Registration). If not, import it as described in [Pega's documentation][dx-initialize].
+   Then copy the builder's `keys` folder into the project. It holds the local HTTPS certificate used by `npm run authenticate`, and `DX-ComponentDev.zip` for step 2. It is not committed to this repository:
+
+   ```shell
+   cp -R node_modules/@pega/custom-dx-components/src/tasks/init/template/keys .
+   ```
+
+   On Windows (PowerShell): `Copy-Item -Recurse node_modules\@pega\custom-dx-components\src\tasks\init\template\keys .`
+
+2. In Pega, make sure the OAuth 2.0 client registration **DX-ComponentDev** exists (Dev Studio → Records → Security → OAuth 2.0 Client Registration). If not, import `keys/DX-ComponentDev.zip` (Dev Studio → Configure → Application → Distribution → Import), then copy the registration's client ID for step 3.
 
 3. Edit `tasks.config.json` and fill in your server and ruleset:
 
