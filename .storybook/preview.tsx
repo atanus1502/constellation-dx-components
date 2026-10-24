@@ -33,7 +33,7 @@ const preview: Preview = {
           <ShortcutManager>
             <LiveLog maxLength={context.args.liveLogMaxLength || 50}>
               <PopoverManager>
-                <Toaster>
+                <Toaster dismissAfter={5000}>
                   <ModalManager>
                     <Story {...context} />
                   </ModalManager>
