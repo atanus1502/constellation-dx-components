@@ -117,6 +117,49 @@ Every [release](https://github.com/atanus1502/constellation-dx-components/releas
 
 3. Continue with steps 3–7 of Option A.
 
+## Use only one component
+
+Every component folder is self-contained: it needs nothing from other folders in this repository. You can take just the one you want, in either of two ways. The examples use TokenScrollList; swap in the folder name of the component you need (see [Components](#components)).
+
+### Way 1 — Clone the project with only that component
+
+Git downloads the project files plus that single component folder:
+
+```shell
+git clone --depth 1 --filter=blob:none --sparse https://github.com/atanus1502/constellation-dx-components.git   # add -b release/1.x for Infinity '25.1
+cd constellation-dx-components
+git sparse-checkout set --no-cone '/*' '!/src/components/*/' '/src/components/Virtusa_ClaudeDXComponents_TokenScrollList/'
+npm install
+```
+
+Then continue with [Option A](#option-a--publish-from-source-recommended) from the `keys` step. The library you publish contains only that component. If you later want more components on the same Pega server, add their folders (`git sparse-checkout add /src/components/<folder>/`) and publish them under a new library version (`npm run createLibVersion`), because published versions are permanent.
+
+### Way 2 — Import it into your own DX project
+
+Use this when you already have a DX Component Builder project with your own organization and library. The builder's `importComponent` command copies the component in and renames it to your names, for example `<YourOrg>_<YourLib>_TokenScrollList`.
+
+1. Download just the component folder:
+
+   ```shell
+   git clone --depth 1 --filter=blob:none --sparse https://github.com/atanus1502/constellation-dx-components.git dx-gallery   # add -b release/1.x for '25.1
+   git -C dx-gallery sparse-checkout set src/components/Virtusa_ClaudeDXComponents_TokenScrollList
+   ```
+
+2. From your project folder, import it (give the full path to `dx-gallery/src/components`):
+
+   ```shell
+   npm run importComponent -- /full/path/to/dx-gallery/src/components Virtusa_ClaudeDXComponents_TokenScrollList
+   ```
+
+   It prints `... has been imported as <YourOrg>_<YourLib>_TokenScrollList`. Run `npm run importComponent` without arguments to pick the folder interactively instead.
+
+3. **Infinity '26 projects only** (builder 26.1.x): copy two setup files from this repository so the component's tests and type-check pass. The component builds without them.
+
+   - `jest.polyfills.ts` into your project root, then in `jest.config.cjs` set `setupFiles: ['./jest.polyfills.ts', './setupFiles.ts']`.
+   - `src/globals.d.ts` over your `src/globals.d.ts` (it adds the `PConnect` type that the builder's template leaves out).
+
+4. Check, build and publish as usual: `npm run lint`, `npm run test`, `npm run buildAllComponents`, `npm run publish`.
+
 ## For developers
 
 ### Tools to install
