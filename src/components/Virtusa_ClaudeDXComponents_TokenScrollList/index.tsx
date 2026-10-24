@@ -13,7 +13,7 @@ import {
   Table,
   Text
 } from '@pega/cosmos-react-core';
-import '../shared/create-nonce';
+import './create-nonce';
 import StyledScrollArea, { StyledFooter } from './styles';
 import {
   getByPath,

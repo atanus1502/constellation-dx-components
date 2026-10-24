@@ -466,18 +466,13 @@ Then `cd mydxcomponents`. Init runs `npm install` for you.
 git clone https://github.com/atanus1502/constellation-dx-components.git
 ```
 
-Copy into your project's `src/components/` folder:
-
-| From the clone                                                              | To your project                                                     |
-| --------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `src/components/Virtusa_ClaudeDXComponents_TokenScrollList/` (whole folder) | `src/components/Virtusa_ClaudeDXComponents_TokenScrollList/`        |
-| `src/components/shared/create-nonce.ts`                                     | `src/components/shared/create-nonce.ts` (skip if it already exists) |
+Copy the component folder into your project's `src/components/` folder. It is self-contained (it carries its own `create-nonce.ts`), so nothing else is needed:
 
 ```bash
-cp -R DXComponents/src/components/Virtusa_ClaudeDXComponents_TokenScrollList mydxcomponents/src/components/
-mkdir -p mydxcomponents/src/components/shared
-cp -n DXComponents/src/components/shared/create-nonce.ts mydxcomponents/src/components/shared/
+cp -R constellation-dx-components/src/components/Virtusa_ClaudeDXComponents_TokenScrollList mydxcomponents/src/components/
 ```
+
+To download only this component instead of the whole repository, see [Use only one component](https://github.com/atanus1502/constellation-dx-components#use-only-one-component).
 
 The widget itself only depends on packages that every DX project already has: `@pega/cosmos-react-core`, `react` and `styled-components`. `mock.ts` and `liveApi.ts` are used only by Storybook and the tests, not by the published widget.
 
