@@ -9,7 +9,7 @@ import {
   mapWikipediaResponse,
   recentWindow
 } from './liveApi';
-import { VirtusaClaudeDxComponentsTokenScrollList, type TokenScrollListProps } from './index';
+import { ClaudeDxComponentsTokenScrollList, type TokenScrollListProps } from './index';
 import {
   createMockDataPage,
   defaultConfig,
@@ -25,7 +25,7 @@ const setup = (api: MockApiOptions, props: Partial<TokenScrollListProps> = {}) =
   const mock = createMockDataPage(api);
   installMockPCore(mock.getPageDataAsync);
   const utils = render(
-    <VirtusaClaudeDxComponentsTokenScrollList
+    <ClaudeDxComponentsTokenScrollList
       {...defaultConfig}
       pageSize={10}
       getPConnect={mockGetPConnect as unknown as TokenScrollListProps['getPConnect']}
@@ -38,7 +38,7 @@ const setup = (api: MockApiOptions, props: Partial<TokenScrollListProps> = {}) =
 const tokensSent = (calls: { parameters: Record<string, unknown> }[]) =>
   calls.map(call => call.parameters.startIdentifier);
 
-describe('VirtusaClaudeDxComponentsTokenScrollList', () => {
+describe('ClaudeDxComponentsTokenScrollList', () => {
   test('renders the Mock API story with the first chunk', async () => {
     render(<MockApi />);
     expect(await screen.findByText('Card transactions')).toBeVisible();
@@ -153,7 +153,7 @@ describe('VirtusaClaudeDxComponentsTokenScrollList', () => {
         }))
     );
     render(
-      <VirtusaClaudeDxComponentsTokenScrollList
+      <ClaudeDxComponentsTokenScrollList
         {...defaultConfig}
         pageSize={10}
         tokenParam='from'
@@ -184,7 +184,7 @@ describe('VirtusaClaudeDxComponentsTokenScrollList', () => {
     const mock = createMockDataPage({ total: 3 });
     installMockPCore(mock.getPageDataAsync);
     render(
-      <VirtusaClaudeDxComponentsTokenScrollList
+      <ClaudeDxComponentsTokenScrollList
         dataPage='D_TransactionsChunk'
         getPConnect={mockGetPConnect as unknown as TokenScrollListProps['getPConnect']}
       />

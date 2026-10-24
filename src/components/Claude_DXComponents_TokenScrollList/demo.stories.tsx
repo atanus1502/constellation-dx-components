@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import { VirtusaClaudeDxComponentsTokenScrollList, type TokenScrollListProps } from './index';
+import { ClaudeDxComponentsTokenScrollList, type TokenScrollListProps } from './index';
 import {
   createMockDataPage,
   defaultConfig,
@@ -13,8 +13,8 @@ import { createWikipediaDataPage, recentWindow } from './liveApi';
 type StoryArgs = Omit<TokenScrollListProps, 'getPConnect'>;
 
 const meta: Meta<StoryArgs> = {
-  title: 'VirtusaClaudeDxComponentsTokenScrollList',
-  component: VirtusaClaudeDxComponentsTokenScrollList as unknown as Meta<StoryArgs>['component'],
+  title: 'ClaudeDxComponentsTokenScrollList',
+  component: ClaudeDxComponentsTokenScrollList as unknown as Meta<StoryArgs>['component'],
   argTypes: {
     heading: { control: 'text' },
     dataPage: { control: 'text' },
@@ -42,7 +42,7 @@ const withMockApi =
     const { getPageDataAsync } = createMockDataPage(options);
     installMockPCore(getPageDataAsync);
     return (
-      <VirtusaClaudeDxComponentsTokenScrollList
+      <ClaudeDxComponentsTokenScrollList
         {...args}
         getPConnect={mockGetPConnect as unknown as TokenScrollListProps['getPConnect']}
       />
@@ -52,7 +52,7 @@ const withMockApi =
 const withLiveApi: Story['render'] = args => {
   installMockPCore(createWikipediaDataPage());
   return (
-    <VirtusaClaudeDxComponentsTokenScrollList
+    <ClaudeDxComponentsTokenScrollList
       {...args}
       getPConnect={mockGetPConnect as unknown as TokenScrollListProps['getPConnect']}
     />

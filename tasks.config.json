@@ -37,7 +37,7 @@
         "archiveRulesetVersion": "01-01-01"
     },
     "component": {
-        "library": "ClaudeDXComponents",
+        "library": "DXComponents",
         "type": "",
         "version": "1.0.0",
         "subtype": "",

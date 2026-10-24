@@ -6,7 +6,7 @@ import * as DemoStories from './demo.stories';
 
 const { Default, Empty, LongContent, Resolved, Urgent } = composeStories(DemoStories);
 
-describe('VirtusaClaudeDxComponentsCaseSummaryWidget', () => {
+describe('ClaudeDxComponentsCaseSummaryWidget', () => {
   it('renders case ID, status, customer name and last updated', async () => {
     render(<Default />);
 

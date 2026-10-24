@@ -1,7 +1,7 @@
 {
-  "name": "virtusa-claude-dx-components",
+  "name": "claude-dx-components",
   "description": "Custom Pega Constellation DX components (widgets and fields) built with Claude Code",
-  "organization": "Virtusa",
+  "organization": "Claude",
   "version": "1.0.0",
   "author": "Atanu Sen",
   "license": "Enter License",

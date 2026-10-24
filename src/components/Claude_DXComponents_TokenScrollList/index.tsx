@@ -61,7 +61,7 @@ const renderValue = (value: unknown, type: ColumnDef['type']) => {
   return typeof value === 'object' ? JSON.stringify(value) : String(value);
 };
 
-export const VirtusaClaudeDxComponentsTokenScrollList = (props: TokenScrollListProps) => {
+export const ClaudeDxComponentsTokenScrollList = (props: TokenScrollListProps) => {
   const {
     heading = 'Records',
     dataPage = '',
@@ -283,4 +283,4 @@ export const VirtusaClaudeDxComponentsTokenScrollList = (props: TokenScrollListP
   );
 };
 
-export default withConfiguration(VirtusaClaudeDxComponentsTokenScrollList);
+export default withConfiguration(ClaudeDxComponentsTokenScrollList);

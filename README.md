@@ -1,4 +1,4 @@
-# Virtusa Claude DX Components
+# Claude DX Components
 
 A collection of ready-to-use Constellation DX components (widgets and fields) for Pega Infinity, built with **Claude Code**: scaffolded with the DX Component Builder CLI, then implemented, reviewed in Storybook and published to Pega Infinity.
 
@@ -17,18 +17,18 @@ Pre-built versions of the component library are attached to each [release](https
 
 ## Components
 
-| Component                                                                          | Type                 | Description                                                                                                                           |
-| ---------------------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| [CaseSummaryWidget](src/components/Virtusa_ClaudeDXComponents_CaseSummaryWidget)   | Widget (CASE)        | Displays case ID, status, customer name and last-updated timestamp                                                                    |
-| [PIIRedactor](src/components/Virtusa_ClaudeDXComponents_PIIRedactor)               | Field (Text)         | Redacted display of card numbers, SSNs, phone numbers, emails and generic values, with a masked-input edit mode                       |
-| [SLADeadlineTracker](src/components/Virtusa_ClaudeDXComponents_SLADeadlineTracker) | Widget (PAGE)        | Landing-page dashboard of SLA and deadline status across active cases, with click-to-open case links                                  |
-| [TokenScrollList](src/components/Virtusa_ClaudeDXComponents_TokenScrollList)       | Widget (PAGE & CASE) | Infinite-scroll table for third-party APIs that page with a continuation token; its README covers the Pega data page setup end to end |
+| Component                                                                   | Type                 | Description                                                                                                                           |
+| --------------------------------------------------------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| [CaseSummaryWidget](src/components/Claude_DXComponents_CaseSummaryWidget)   | Widget (CASE)        | Displays case ID, status, customer name and last-updated timestamp                                                                    |
+| [PIIRedactor](src/components/Claude_DXComponents_PIIRedactor)               | Field (Text)         | Redacted display of card numbers, SSNs, phone numbers, emails and generic values, with a masked-input edit mode                       |
+| [SLADeadlineTracker](src/components/Claude_DXComponents_SLADeadlineTracker) | Widget (PAGE)        | Landing-page dashboard of SLA and deadline status across active cases, with click-to-open case links                                  |
+| [TokenScrollList](src/components/Claude_DXComponents_TokenScrollList)       | Widget (PAGE & CASE) | Infinite-scroll table for third-party APIs that page with a continuation token; its README covers the Pega data page setup end to end |
 
 Each component folder has a README with its properties, the data it expects and how to configure it in App Studio.
 
 ## Use the components in your Pega application
 
-All components ship as one Constellation component library, `Virtusa_ClaudeDXComponents`. There are two ways to get it into Pega.
+All components ship as one Constellation component library, `Claude_DXComponents`. There are two ways to get it into Pega.
 
 ### Option A — Publish from source (recommended)
 
@@ -92,14 +92,14 @@ You also need network access to the npm registry and to your Pega server, and lo
 
 6. In Pega, enable the library for your application:
 
-   - **Infinity '26:** App Studio → **User Interface → Component Library**, open `Virtusa_ClaudeDXComponents`, and on the **Components** tab tick the checkbox in the column headed `<YourApp>:<version>`.
+   - **Infinity '26:** App Studio → **User Interface → Component Library**, open `Claude_DXComponents`, and on the **Components** tab tick the checkbox in the column headed `<YourApp>:<version>`.
    - **Infinity '25:** the components appear in App Studio once published.
 
 7. Add a component to your UI: for widgets, open the case type or landing page in App Studio, go to the **UX** tab and add the widget (for example to the case **Utilities** pane). For fields, select the property in a view and choose the component from its **Display as** list.
 
 ### Option B — Import a pre-built library
 
-Every [release](https://github.com/atanus1502/constellation-dx-components/releases) has the library archive `Virtusa_ClaudeDXComponents_<version>.arch.zip`. This is the same archive kept in this repository under `store/`, so it is useful when you want a specific version without cloning a branch.
+Every [release](https://github.com/atanus1502/constellation-dx-components/releases) has the library archive `Claude_DXComponents_<version>.arch.zip`. This is the same archive kept in this repository under `store/`, so it is useful when you want a specific version without cloning a branch.
 
 1. Create a DX Component Builder project for your Pega version ([Pega documentation][dx-initialize]):
 
@@ -128,7 +128,7 @@ Git downloads the project files plus that single component folder:
 ```shell
 git clone --depth 1 --filter=blob:none --sparse https://github.com/atanus1502/constellation-dx-components.git   # add -b release/1.x for Infinity '25.1
 cd constellation-dx-components
-git sparse-checkout set --no-cone '/*' '!/src/components/*/' '/src/components/Virtusa_ClaudeDXComponents_TokenScrollList/'
+git sparse-checkout set --no-cone '/*' '!/src/components/*/' '/src/components/Claude_DXComponents_TokenScrollList/'
 npm install
 ```
 
@@ -142,13 +142,13 @@ Use this when you already have a DX Component Builder project with your own orga
 
    ```shell
    git clone --depth 1 --filter=blob:none --sparse https://github.com/atanus1502/constellation-dx-components.git dx-gallery   # add -b release/1.x for '25.1
-   git -C dx-gallery sparse-checkout set src/components/Virtusa_ClaudeDXComponents_TokenScrollList
+   git -C dx-gallery sparse-checkout set src/components/Claude_DXComponents_TokenScrollList
    ```
 
 2. From your project folder, import it (give the full path to `dx-gallery/src/components`):
 
    ```shell
-   npm run importComponent -- /full/path/to/dx-gallery/src/components Virtusa_ClaudeDXComponents_TokenScrollList
+   npm run importComponent -- /full/path/to/dx-gallery/src/components Claude_DXComponents_TokenScrollList
    ```
 
    It prints `... has been imported as <YourOrg>_<YourLib>_TokenScrollList`. Run `npm run importComponent` without arguments to pick the folder interactively instead.
@@ -229,7 +229,7 @@ npm run buildComponent
 npm run create
 ```
 
-Use organization `Virtusa` and library `ClaudeDXComponents`, so the component is named `Virtusa_ClaudeDXComponents_<Name>`. Each component needs `index.tsx`, `config.json`, `mock.ts`, `demo.stories.tsx`, `demo.test.tsx`, `docs.mdx` and a `README.md`.
+Use organization `Claude` and library `DXComponents`, so the component is named `Claude_DXComponents_<Name>`. Each component needs `index.tsx`, `config.json`, `mock.ts`, `demo.stories.tsx`, `demo.test.tsx`, `docs.mdx` and a `README.md`.
 
 ### Release a new library version
 
@@ -238,7 +238,7 @@ Library versions are permanent once published, so bump the version for every rel
 ```shell
 npm run createLibVersion   # e.g. 2.0.1 — copies the current components into the new version
 npm run buildAllComponents
-npm run storeLibVersion    # writes store/Virtusa_ClaudeDXComponents/<version>/
+npm run storeLibVersion    # writes store/Claude_DXComponents/<version>/
 ```
 
 Commit the new `store/` folder, then attach its `.arch.zip` to a GitHub release named `<version> - Pega <release>`.

@@ -1,11 +1,11 @@
-# Token Scroll List (`Virtusa_ClaudeDXComponents_TokenScrollList`)
+# Token Scroll List (`Claude_DXComponents_TokenScrollList`)
 
 A Constellation DX widget that shows an infinite-scrolling table for third-party APIs that page with a **continuation token** (for example `nextIdentifier` → `startIdentifier`) instead of a page number or offset.
 
 |            |                                                                                                                 |
 | ---------- | --------------------------------------------------------------------------------------------------------------- |
 | Type       | Widget — `PAGE` and `CASE` (landing pages and the case Utilities pane)                                          |
-| Library    | `ClaudeDXComponents` (organization `Virtusa`)                                                                   |
+| Library    | `DXComponents` (organization `Claude`)                                                                          |
 | Built with | DX Component Builder `@pega/custom-dx-components@~26.1.11` (library mode), Cosmos `@pega/cosmos-react-core` 9.5 |
 | Target     | Pega Infinity '26 (for other releases, rebuild with the matching builder version — see Part 5)                  |
 
@@ -123,7 +123,7 @@ This repo is currently in **local-only** mode. Edit `tasks.config.json` in the p
   "grantType": "authCode",          // authCode (browser login) recommended
   "clientId": "<client id from the OAuth record>"
 },
-"component": { "library": "ClaudeDXComponents" }
+"component": { "library": "DXComponents" }
 ```
 
 > Do not commit real passwords or client secrets. With `authCode`, `user`, `password` and `clientSecret` stay empty.
@@ -136,12 +136,12 @@ Run from the project root, one at a time (each command asks questions in the ter
 npm install                 # first time only
 npm run lint                # must report zero errors
 npm run test                # all tests must pass
-npm run buildComponent      # select Virtusa_ClaudeDXComponents_TokenScrollList, answer N to dev build
+npm run buildComponent      # select Claude_DXComponents_TokenScrollList, answer N to dev build
 npm run authenticate        # a browser opens; log in to Pega
 npm run publish             # select the component; confirm the ruleset and version
 ```
 
-On success, Dev Studio shows `Virtusa_ClaudeDXComponents_TokenScrollList` as a **UI Component** (`Rule-UI-Component`) in the target ruleset.
+On success, Dev Studio shows `Claude_DXComponents_TokenScrollList` as a **UI Component** (`Rule-UI-Component`) in the target ruleset.
 
 ### 4. Moving to other environments
 
@@ -233,7 +233,7 @@ npm install
 npm run startStorybook
 ```
 
-Open http://localhost:6040. Storybook opens straight on **Live API — Wikipedia**, the first story under **VirtusaClaudeDxComponentsTokenScrollList**:
+Open http://localhost:6040. Storybook opens straight on **Live API — Wikipedia**, the first story under **ClaudeDxComponentsTokenScrollList**:
 
 | Story                              | What it shows                                                                                                                                         |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -449,15 +449,15 @@ npx @pega/custom-dx-components@~26.1.11 init
 
 Answer the prompts:
 
-| Prompt               | Enter                                                                          |
-| -------------------- | ------------------------------------------------------------------------------ |
-| Project name         | e.g. `mydxcomponents` (lowercase, no spaces)                                   |
-| Organization name    | **`Virtusa`** — keep this so the component keeps its name (see the note below) |
-| Description / Author | anything                                                                       |
+| Prompt               | Enter                                                                         |
+| -------------------- | ----------------------------------------------------------------------------- |
+| Project name         | e.g. `mydxcomponents` (lowercase, no spaces)                                  |
+| Organization name    | **`Claude`** — keep this so the component keeps its name (see the note below) |
+| Description / Author | anything                                                                      |
 
 Then `cd mydxcomponents`. Init runs `npm install` for you.
 
-> **Why `Virtusa`?** A component's name is `<Organization>_<Library>_<Component>`, and the builder checks that `config.json` matches the project. Using organization `Virtusa` and library `ClaudeDXComponents` lets you use the folder exactly as it is. To use your own names instead, see [Renaming to your own organization](#renaming-to-your-own-organization).
+> **Why `Claude`?** A component's name is `<Organization>_<Library>_<Component>`, and the builder checks that `config.json` matches the project. Using organization `Claude` and library `DXComponents` lets you use the folder exactly as it is. To use your own names instead, see [Renaming to your own organization](#renaming-to-your-own-organization).
 
 ### Step 2 — Copy the component from GitHub
 
@@ -469,7 +469,7 @@ git clone https://github.com/atanus1502/constellation-dx-components.git
 Copy the component folder into your project's `src/components/` folder. It is self-contained (it carries its own `create-nonce.ts`), so nothing else is needed:
 
 ```bash
-cp -R constellation-dx-components/src/components/Virtusa_ClaudeDXComponents_TokenScrollList mydxcomponents/src/components/
+cp -R constellation-dx-components/src/components/Claude_DXComponents_TokenScrollList mydxcomponents/src/components/
 ```
 
 To download only this component instead of the whole repository, see [Use only one component](https://github.com/atanus1502/constellation-dx-components#use-only-one-component).
@@ -519,7 +519,7 @@ setupFiles: ['./jest.polyfills.ts', './setupFiles.ts'],
 
 ```bash
 npm run lint                 # expect no errors in the component
-npx jest src/components/Virtusa_ClaudeDXComponents_TokenScrollList
+npx jest src/components/Claude_DXComponents_TokenScrollList
 npm run startStorybook       # http://localhost:6040
 ```
 
@@ -546,7 +546,7 @@ Edit `tasks.config.json` in your project:
     "grantType": "authCode", // browser login — no password stored in the file
     "clientId": "10095186356008396159" // the DX-ComponentDev client
   },
-  "component": { "library": "ClaudeDXComponents" },
+  "component": { "library": "DXComponents" },
   "libraryModeCL": true
 }
 ```
@@ -567,7 +567,7 @@ npm run createLib
 | Prompt                                       | Answer                                                        |
 | -------------------------------------------- | ------------------------------------------------------------- |
 | Ok to continue?                              | `Y`                                                           |
-| Enter library name                           | `ClaudeDXComponents`                                          |
+| Enter library name                           | `DXComponents`                                                |
 | Enter version                                | `1.0.0`                                                       |
 | Current config changes or original defaults? | **`Current`** (option 1)                                      |
 | Would you like to update your code?          | `Y` — moves `create-nonce` into `shared/` and updates imports |
@@ -581,7 +581,7 @@ npm run authenticate     # a browser opens: accept the localhost certificate war
 npm run publish          # confirm the library, then the ruleset name and version from Step 4
 ```
 
-It prints `Success : Component Library Virtusa_ClaudeDXComponents/<version> successfully created in ruleset <ruleset>`.
+It prints `Success : Component Library Claude_DXComponents/<version> successfully created in ruleset <ruleset>`.
 
 > **Library versions are permanent.** After a version is published, the builder can't publish or delete it again. For the next change, create a new version first with `npm run createLibVersion`, choosing **Y** to copy the current components, then publish.
 
@@ -600,9 +600,9 @@ It prints `Success : Component Library Virtusa_ClaudeDXComponents/<version> succ
 
 This is the step that's easy to miss. A published library **doesn't appear in Studio until it's enabled for the application.**
 
-1. In Infinity Studio, search for **`Virtusa_ClaudeDXComponents`**.
+1. In Infinity Studio, search for **`Claude_DXComponents`**.
 2. Open the result of type **Component Library** (expand the row to pick the instance in your ruleset).
-3. On the **Components** tab, the first column is headed with your **application name and version** (for example `MyApp:01.01.01`). **Tick the checkbox** next to `Virtusa_ClaudeDXComponents_TokenScrollList`.
+3. On the **Components** tab, the first column is headed with your **application name and version** (for example `MyApp:01.01.01`). **Tick the checkbox** next to `Claude_DXComponents_TokenScrollList`.
 
 The checkbox is **one setting per library for your application**, shared by every version of it. Unticking it on any version hides the widget for all versions.
 
@@ -633,9 +633,9 @@ To publish the widget under your own names (for example `Acme_Widgets_TokenScrol
    ```bash
    npm run create     # type: Widget, subtype: PAGE & CASE, name: TokenScrollList
    ```
-3. Copy every file **except `config.json`** from `Virtusa_ClaudeDXComponents_TokenScrollList/` into the new `Acme_Widgets_TokenScrollList/` folder.
+3. Copy every file **except `config.json`** from `Claude_DXComponents_TokenScrollList/` into the new `Acme_Widgets_TokenScrollList/` folder.
 4. In the new folder's `config.json`, replace `label`, `description`, `properties` and `defaultConfig` with the ones from this repo's `config.json`. Keep the generated `name`, `componentKey`, `organization` and `library`.
-5. Search and replace the exported component name `VirtusaClaudeDxComponentsTokenScrollList` → `AcmeWidgetsTokenScrollList` in `index.tsx`, `demo.stories.tsx` and `demo.test.tsx`.
+5. Search and replace the exported component name `ClaudeDxComponentsTokenScrollList` → `AcmeWidgetsTokenScrollList` in `index.tsx`, `demo.stories.tsx` and `demo.test.tsx`.
 6. Run Step 3b again, then continue from Step 6.
 
 ### Other Pega versions

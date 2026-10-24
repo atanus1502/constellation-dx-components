@@ -1,17 +1,17 @@
 /* eslint-disable react/jsx-no-useless-fragment */
 import type { Meta, StoryObj } from '@storybook/react';
 
-import VirtusaClaudeDxComponentsSlaDeadlineTracker from './index';
+import ClaudeDxComponentsSlaDeadlineTracker from './index';
 import configProps, { slaRows } from './mock';
 
-const meta: Meta<typeof VirtusaClaudeDxComponentsSlaDeadlineTracker> = {
-  title: 'VirtusaClaudeDxComponentsSlaDeadlineTracker',
-  component: VirtusaClaudeDxComponentsSlaDeadlineTracker,
+const meta: Meta<typeof ClaudeDxComponentsSlaDeadlineTracker> = {
+  title: 'ClaudeDxComponentsSlaDeadlineTracker',
+  component: ClaudeDxComponentsSlaDeadlineTracker,
   excludeStories: /.*Data$/
 };
 
 export default meta;
-type Story = StoryObj<typeof VirtusaClaudeDxComponentsSlaDeadlineTracker>;
+type Story = StoryObj<typeof ClaudeDxComponentsSlaDeadlineTracker>;
 
 if (!window.PCore) {
   window.PCore = {} as any;
@@ -57,13 +57,13 @@ const mockDataPage = (rows: unknown[]) => {
 
 export const Default: Story = (args: any) => {
   mockDataPage(slaRows);
-  return <VirtusaClaudeDxComponentsSlaDeadlineTracker {...configProps} getPConnect={getPConnect} {...args} />;
+  return <ClaudeDxComponentsSlaDeadlineTracker {...configProps} getPConnect={getPConnect} {...args} />;
 };
 Default.args = { ...configProps };
 
 export const AllOnTrack: Story = (args: any) => {
   mockDataPage(slaRows.map(row => ({ ...row, status: 'On Track', percentUsed: 35 })));
-  return <VirtusaClaudeDxComponentsSlaDeadlineTracker {...configProps} getPConnect={getPConnect} {...args} />;
+  return <ClaudeDxComponentsSlaDeadlineTracker {...configProps} getPConnect={getPConnect} {...args} />;
 };
 AllOnTrack.args = { ...configProps };
 
@@ -73,12 +73,12 @@ export const ManyRows: Story = (args: any) => {
     caseID: `C-1${1000 + i}`
   }));
   mockDataPage(extraRows);
-  return <VirtusaClaudeDxComponentsSlaDeadlineTracker {...configProps} getPConnect={getPConnect} {...args} />;
+  return <ClaudeDxComponentsSlaDeadlineTracker {...configProps} getPConnect={getPConnect} {...args} />;
 };
 ManyRows.args = { ...configProps };
 
 export const Empty: Story = (args: any) => {
   mockDataPage([]);
-  return <VirtusaClaudeDxComponentsSlaDeadlineTracker {...configProps} getPConnect={getPConnect} {...args} />;
+  return <ClaudeDxComponentsSlaDeadlineTracker {...configProps} getPConnect={getPConnect} {...args} />;
 };
 Empty.args = { ...configProps };

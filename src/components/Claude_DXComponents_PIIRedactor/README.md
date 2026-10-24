@@ -1,27 +1,30 @@
-# Virtusa_ClaudeDXComponents_PIIRedactor
+# Claude_DXComponents_PIIRedactor
 
 **Type:** Field — Text
-**Library:** ClaudeDXComponents
+**Library:** DXComponents
 **Version:** 0.0.1
 
 ## Overview
+
 Displays a partially-masked view of sensitive data (card numbers, SSNs, phone numbers, emails, or any generic value) so PII stays hidden on screen while a trailing portion remains visible for identification. In edit mode the input is masked by default (like a password field), with a show/hide toggle so the person entering data can verify it before saving.
 
 ## When to use
+
 Add this field to any case step or view where a property holds sensitive data that shouldn't be fully exposed on screen — e.g. a stored card number, SSN, or phone number — but where showing the last few characters helps the user confirm they're looking at the right record.
 
 ## Props
 
-| Prop | Type | Required | Default | Description |
-|------|------|----------|---------|-------------|
-| `label` | Text | No | — | Field label |
-| `placeholder` | Text | No | — | Placeholder shown in edit mode |
-| `preset` | Select | No | `Generic` | Redaction format: `Card Number`, `SSN`, `Phone`, `Email`, `Generic` |
-| `visibleChars` | Number | No | `4` | Trailing characters left visible — only used by the `Generic` preset |
-| `disabled` | Boolean | No | `false` | Disables the field in edit mode |
-| `required` | Boolean | No | `false` | Marks the field required in edit mode |
+| Prop           | Type    | Required | Default   | Description                                                          |
+| -------------- | ------- | -------- | --------- | -------------------------------------------------------------------- |
+| `label`        | Text    | No       | —         | Field label                                                          |
+| `placeholder`  | Text    | No       | —         | Placeholder shown in edit mode                                       |
+| `preset`       | Select  | No       | `Generic` | Redaction format: `Card Number`, `SSN`, `Phone`, `Email`, `Generic`  |
+| `visibleChars` | Number  | No       | `4`       | Trailing characters left visible — only used by the `Generic` preset |
+| `disabled`     | Boolean | No       | `false`   | Disables the field in edit mode                                      |
+| `required`     | Boolean | No       | `false`   | Marks the field required in edit mode                                |
 
 ## Visual states
+
 - **CardNumber** — `•••• •••• •••• 1234` format (display-only)
 - **SSN** — `•••-••-6789` format (display-only)
 - **Phone** — `(•••) •••-4567` format (display-only)
@@ -32,6 +35,8 @@ Add this field to any case step or view where a property holds sensitive data th
 - **Empty** — graceful empty-value fallback
 
 ## Installation
+
 Published to Pega as a `Rule-UI-Component`. Available in:
+
 - Pega 25 and below: App Studio → Configure view → Fields/Widgets
 - Pega 26 and above: Infinity Studio → User Interface → Component Library

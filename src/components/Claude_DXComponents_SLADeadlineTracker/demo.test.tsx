@@ -7,7 +7,7 @@ import { slaRows } from './mock';
 
 const { Default, AllOnTrack, ManyRows, Empty } = composeStories(DemoStories);
 
-describe('VirtusaClaudeDxComponentsSlaDeadlineTracker', () => {
+describe('ClaudeDxComponentsSlaDeadlineTracker', () => {
   it('renders heading, description and one card per data page row', async () => {
     render(<Default />);
 

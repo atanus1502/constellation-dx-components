@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import VirtusaClaudeDxComponentsCaseSummaryWidget from './index';
+import ClaudeDxComponentsCaseSummaryWidget from './index';
 import mockProps from './mock';
 
-const meta: Meta<typeof VirtusaClaudeDxComponentsCaseSummaryWidget> = {
-  title: 'VirtusaClaudeDxComponentsCaseSummaryWidget',
-  component: VirtusaClaudeDxComponentsCaseSummaryWidget,
+const meta: Meta<typeof ClaudeDxComponentsCaseSummaryWidget> = {
+  title: 'ClaudeDxComponentsCaseSummaryWidget',
+  component: ClaudeDxComponentsCaseSummaryWidget,
   argTypes: {
     status: {
       control: 'select',
@@ -15,7 +15,7 @@ const meta: Meta<typeof VirtusaClaudeDxComponentsCaseSummaryWidget> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof VirtusaClaudeDxComponentsCaseSummaryWidget>;
+type Story = StoryObj<typeof ClaudeDxComponentsCaseSummaryWidget>;
 
 if (!window.PCore) {
   window.PCore = {} as any;

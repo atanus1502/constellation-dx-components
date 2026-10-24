@@ -3,7 +3,7 @@ import { withConfiguration, Text, Status, Link, type StatusProps } from '@pega/c
 import type { PConnProps } from './PConnProps';
 import './create-nonce';
 
-import StyledVirtusaClaudeDxComponentsSlaDeadlineTrackerWrapper from './styles';
+import StyledClaudeDxComponentsSlaDeadlineTrackerWrapper from './styles';
 
 type SLAStatus = 'On Track' | 'At Risk' | 'Overdue';
 
@@ -20,7 +20,7 @@ interface SLARow {
 }
 
 // interface for props
-interface VirtusaClaudeDxComponentsSlaDeadlineTrackerProps extends PConnProps {
+interface ClaudeDxComponentsSlaDeadlineTrackerProps extends PConnProps {
   /** Widget heading */
   heading?: string;
   /** Widget subheading */
@@ -178,7 +178,7 @@ function SLACard({
 
 // props passed in combination of props from property panel (config.json) and run time props from Constellation
 // any default values in config.pros should be set in defaultProps at bottom of this file
-function VirtusaClaudeDxComponentsSlaDeadlineTracker(props: VirtusaClaudeDxComponentsSlaDeadlineTrackerProps) {
+function ClaudeDxComponentsSlaDeadlineTracker(props: ClaudeDxComponentsSlaDeadlineTrackerProps) {
   const {
     getPConnect,
     heading = 'SLA & Deadline Tracker',
@@ -216,7 +216,7 @@ function VirtusaClaudeDxComponentsSlaDeadlineTracker(props: VirtusaClaudeDxCompo
   );
 
   return (
-    <StyledVirtusaClaudeDxComponentsSlaDeadlineTrackerWrapper>
+    <StyledClaudeDxComponentsSlaDeadlineTrackerWrapper>
       <div className='sla-header'>
         <div>
           <Text variant='h2' as='div'>
@@ -262,8 +262,8 @@ function VirtusaClaudeDxComponentsSlaDeadlineTracker(props: VirtusaClaudeDxCompo
           </Text>
         </div>
       )}
-    </StyledVirtusaClaudeDxComponentsSlaDeadlineTrackerWrapper>
+    </StyledClaudeDxComponentsSlaDeadlineTrackerWrapper>
   );
 }
 
-export default withConfiguration(VirtusaClaudeDxComponentsSlaDeadlineTracker);
+export default withConfiguration(ClaudeDxComponentsSlaDeadlineTracker);
